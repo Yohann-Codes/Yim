@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 /**
+ * 数据访问层
+ * <p>
  * Created by yohann on 2017/1/8.
  */
 public class Dao {

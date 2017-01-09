@@ -13,6 +13,7 @@ public class ChatPacket extends Packet {
     private String srcUsername;
     private String desUsername;
     private String message;
+    private long time;
 
     public ChatPacket() {
         packetType = PacketType.CAHT;
@@ -40,5 +41,23 @@ public class ChatPacket extends Packet {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    @Override
+    public String toString() {
+        return "ChatPacket{" +
+                "srcUsername='" + srcUsername + '\'' +
+                ", desUsername='" + desUsername + '\'' +
+                ", message='" + message + '\'' +
+                ", time=" + time +
+                '}';
     }
 }

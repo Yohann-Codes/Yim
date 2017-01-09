@@ -1,6 +1,6 @@
 package dao;
 
-import bean.UserBean;
+import packet.UserInfoPacket;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -61,8 +61,8 @@ public class UserDao extends Dao {
      * @param username
      * @return
      */
-    public List<UserBean> queryByUsername(String username) {
-        List<UserBean> users = new ArrayList<UserBean>();
+    public List<UserInfoPacket> queryByUsername(String username) {
+        List<UserInfoPacket> users = new ArrayList<UserInfoPacket>();
         String sql = "SELECT * FROM user_info WHERE username = ?";
         PreparedStatement pstmt = null;
         ResultSet resultSet = null;
@@ -71,16 +71,15 @@ public class UserDao extends Dao {
             pstmt.setString(1, username);
             resultSet = pstmt.executeQuery();
             if (resultSet.next()) {
-                UserBean userBean = new UserBean();
-                userBean.setUsername(resultSet.getString("username"));
-                userBean.setPassword(resultSet.getString("password"));
-                userBean.setName(resultSet.getString("name"));
-                userBean.setSex(resultSet.getString("sex"));
-                userBean.setAge(resultSet.getString("age"));
-                userBean.setPhone(resultSet.getString("phone"));
-                userBean.setAddress(resultSet.getString("address"));
-                userBean.setIntroduction(resultSet.getString("introduction"));
-                users.add(userBean);
+                UserInfoPacket user = new UserInfoPacket();
+                user.setUsername(resultSet.getString("username"));
+                user.setName(resultSet.getString("name"));
+                user.setSex(resultSet.getString("sex"));
+                user.setAge(resultSet.getString("age"));
+                user.setPhone(resultSet.getString("phone"));
+                user.setAddress(resultSet.getString("address"));
+                user.setIntroduction(resultSet.getString("introduction"));
+                users.add(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -110,6 +109,35 @@ public class UserDao extends Dao {
         try {
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, name);
+            pstmt.setString(2, username);
+            row = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return row;
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param username
+     * @param password
+     * @return
+     */
+    public int updatePassword(String username, String password) {
+        String sql = "update user_info set password = ? where username = ?";
+        PreparedStatement pstmt = null;
+        int row = 0;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, password);
             pstmt.setString(2, username);
             row = pstmt.executeUpdate();
         } catch (SQLException e) {

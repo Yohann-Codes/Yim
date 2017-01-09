@@ -10,8 +10,10 @@ import common.PacketType;
  */
 public class UserInfoPacket extends Packet {
 
+    // 用户名
     private String username;
-
+    // 密码
+    private String password;
     // 姓名
     private String name;
     // 性别
@@ -83,5 +85,27 @@ public class UserInfoPacket extends Packet {
 
     public void setIntroduction(String introduction) {
         this.introduction = introduction;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "UserInfoPacket{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", sex='" + sex + '\'' +
+                ", age='" + age + '\'' +
+                ", phone='" + phone + '\'' +
+                ", address='" + address + '\'' +
+                ", introduction='" + introduction + '\'' +
+                '}';
     }
 }

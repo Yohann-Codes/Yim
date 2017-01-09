@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
+ * 好友数据访问层
+ * <p>
  * Created by yohann on 2017/1/8.
  */
 public class FriendDao extends Dao {

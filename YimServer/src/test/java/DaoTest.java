@@ -1,9 +1,12 @@
-import bean.UserBean;
 import dao.FriendDao;
+import dao.OfflineMsgDao;
 import dao.UserDao;
 import org.junit.Test;
+import packet.ChatPacket;
+import packet.UserInfoPacket;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -27,7 +30,7 @@ public class DaoTest {
     public void queryByUsername() {
         try {
             UserDao userDao = new UserDao();
-            List<UserBean> users = userDao.queryByUsername("yohann");
+            List<UserInfoPacket> users = userDao.queryByUsername("yohann");
             System.out.println(users);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -41,6 +44,19 @@ public class DaoTest {
         try {
             UserDao userDao = new UserDao();
             int row = userDao.updateName("yohann", "杨欢");
+            System.out.println(row);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void updatePassword() {
+        try {
+            UserDao userDao = new UserDao();
+            int row = userDao.updatePassword("yohann", "456");
             System.out.println(row);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -149,6 +165,48 @@ public class DaoTest {
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void insertMsg() {
+        try {
+            OfflineMsgDao offlineMsgDao = new OfflineMsgDao();
+            int row = offlineMsgDao.insertMsg("wangwu", "lisi", "在哪呢？",
+                    new Timestamp(System.currentTimeMillis()));
+            System.out.println(row);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void queryMsg() {
+        try {
+            OfflineMsgDao offlineMsgDao = new OfflineMsgDao();
+            List<ChatPacket> msgs = offlineMsgDao.queryMsg("lisi");
+            for (ChatPacket packet : msgs) {
+                System.out.println(packet);
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void deleteMsg() {
+        try {
+            OfflineMsgDao offlineMsgDao = new OfflineMsgDao();
+            int row = offlineMsgDao.deleteMsg("lisi");
+            System.out.println(row);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
