@@ -1,5 +1,8 @@
 package launcher;
 
+import common.SerConstants;
+import transport.Service;
+
 /**
  * 启动类
  * <p>
@@ -7,5 +10,8 @@ package launcher;
  */
 public class Launcher {
     public static void main(String[] args) {
+        // 配置线程池大小和端口
+        System.out.println("-- 开始启动服务器程序 --");
+        new Service(SerConstants.NTHREADS).start(SerConstants.PORT);
     }
 }

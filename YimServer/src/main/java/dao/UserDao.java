@@ -73,6 +73,7 @@ public class UserDao extends Dao {
             if (resultSet.next()) {
                 UserInfoPacket user = new UserInfoPacket();
                 user.setUsername(resultSet.getString("username"));
+                user.setPassword(resultSet.getString("password"));
                 user.setName(resultSet.getString("name"));
                 user.setSex(resultSet.getString("sex"));
                 user.setAge(resultSet.getString("age"));
