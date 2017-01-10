@@ -6,7 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import packet.LoginPacket;
 
 /**
- * 判断包类型
+ * 判断包类型，分发处理
  * <p>
  * Created by yohann on 2017/1/9.
  */
@@ -22,7 +22,6 @@ public class SubPacket implements Runnable {
     public void run() {
         switch (packet.packetType) {
             case PacketType.LOGIN:
-                System.out.println("-- 登录数据包 --");
                 LoginPacket loginPacket = (LoginPacket) packet;
                 new LoginLogic(loginPacket, ctx).deal();
                 break;

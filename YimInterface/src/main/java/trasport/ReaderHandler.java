@@ -2,9 +2,9 @@ package trasport;
 
 import common.Packet;
 import interfaces.Connection;
+import interfaces.SubPacket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import interfaces.SubPacket;
 
 /**
  * 最终读取数据的Handler
@@ -25,15 +25,10 @@ public class ReaderHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        super.channelInactive(ctx);
-    }
-
-    @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof Packet) {
             Packet packet = (Packet) msg;
-            new SubPacket(packet, conn).deal();
+            new SubPacket(packet, ctx).deal();
         }
     }
 }

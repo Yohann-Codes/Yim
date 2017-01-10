@@ -6,6 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
+import log.MyLog;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,7 +26,7 @@ public class Service {
      */
     public Service(int nThreads) {
         tPool = Executors.newFixedThreadPool(nThreads);
-        System.out.println("-- 线程池配置完成 --");
+        MyLog.sysLogger("线程池配置完成");
     }
 
     /**
@@ -46,15 +47,14 @@ public class Service {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast("PacketCodec", new PacketCodec());
-                            pipeline.addLast(new IdleStateHandler(6, 0, 0));
-                            pipeline.addLast("HeartbeatHandler", new HeartbeatHandler());
+                            pipeline.addLast("IdleStateHandler", new IdleStateHandler(6, 0, 0));
                             pipeline.addLast("ReaderHandler", new ReaderHandler(tPool));
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-            System.out.println("-- 服务器启动成功 --");
+            MyLog.sysLogger("服务器启动成功");
 
             ChannelFuture future = bootstrap.bind(port).sync();
             future.channel().closeFuture().sync();

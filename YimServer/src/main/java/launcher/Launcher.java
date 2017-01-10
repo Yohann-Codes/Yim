@@ -1,6 +1,7 @@
 package launcher;
 
 import common.SerConstants;
+import log.MyLog;
 import transport.Service;
 
 /**
@@ -11,7 +12,7 @@ import transport.Service;
 public class Launcher {
     public static void main(String[] args) {
         // 配置线程池大小和端口
-        System.out.println("-- 开始启动服务器程序 --");
+        MyLog.sysLogger("开始启动服务器程序");
         new Service(SerConstants.NTHREADS).start(SerConstants.PORT);
     }
 }
