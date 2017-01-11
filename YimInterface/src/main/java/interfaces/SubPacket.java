@@ -4,9 +4,14 @@ import common.CacheVars;
 import common.Packet;
 import common.PacketType;
 import io.netty.util.ReferenceCountUtil;
+import packet.ChatPacket;
+import packet.ResChatPacket;
 import packet.RespLoginPacket;
 import packet.RespRegPacket;
 import trasport.HeartbeatHandler;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 分包处理
@@ -30,6 +35,16 @@ public class SubPacket {
             case PacketType.RESP_REG:
                 RespRegPacket respRegPacket = (RespRegPacket) packet;
                 dealRespReg(respRegPacket);
+                break;
+
+            case PacketType.RESP_CHAT:
+                ResChatPacket resChatPacket = (ResChatPacket) packet;
+                dealRespChat(resChatPacket);
+                break;
+
+            case PacketType.CAHT:
+                ChatPacket chatPacket = (ChatPacket) packet;
+                dealChat(chatPacket);
                 break;
         }
     }
@@ -65,5 +80,31 @@ public class SubPacket {
             System.out.println("Default");
         }
         ReferenceCountUtil.release(respRegPacket);
+    }
+
+    /**
+     * 聊天响应
+     *
+     * @param resChatPacket
+     */
+    public void dealRespChat(ResChatPacket resChatPacket) {
+        if (resChatPacket.isSuccessful()) {
+            System.out.println("Success");
+        } else {
+            System.out.println("Default");
+        }
+        ReferenceCountUtil.release(resChatPacket);
+    }
+
+    /**
+     * 接收聊天消息
+     *
+     * @param chatPacket
+     */
+    public void dealChat(ChatPacket chatPacket) {
+        String time = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss").format(new Date(chatPacket.getTime()));
+        System.out.println(chatPacket.getSrcUsername() + ": "
+                + chatPacket.getMessage() + "   [ " + time + " ]");
+        ReferenceCountUtil.release(chatPacket);
     }
 }

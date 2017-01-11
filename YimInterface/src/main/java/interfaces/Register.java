@@ -2,7 +2,6 @@ package interfaces;
 
 import common.CacheVars;
 import common.Constants;
-import packet.LoginPacket;
 import packet.RegisterPacket;
 import trasport.Service;
 

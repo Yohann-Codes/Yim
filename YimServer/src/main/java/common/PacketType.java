@@ -30,8 +30,10 @@ public class PacketType {
     public static final int ALL_FRIEND = 0x0b;
     // 用户详细信息
     public static final int USER_INFO = 0x0c;
-    // 登录响应数据包
+    // 登录响应
     public static final int RESP_LOGIN = 0x0d;
-    // 注册响应数据包
+    // 注册响应
     public static final int RESP_REG = 0x0e;
+    // 聊天响应
+    public static final int RESP_CHAT = 0x0f;
 }

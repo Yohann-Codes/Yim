@@ -1,3 +1,4 @@
+import interfaces.Chat;
 import interfaces.Login;
 import interfaces.Logout;
 import interfaces.Register;
@@ -17,6 +18,7 @@ public class Test {
         cMap.put("login", 1);
         cMap.put("logout", 2);
         cMap.put("register", 3);
+        cMap.put("chat", 4);
 
         Scanner sc = new Scanner(System.in);
         while (true) {
@@ -39,6 +41,10 @@ public class Test {
 
                     case 3:
                         new Register(cArr[1], cArr[2]).execute();
+                        break;
+
+                    case 4:
+                        new Chat(cArr[1], cArr[2]).execute();
                         break;
                 }
             }

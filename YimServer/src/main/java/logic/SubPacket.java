@@ -3,6 +3,7 @@ package logic;
 import common.Packet;
 import common.PacketType;
 import io.netty.channel.Channel;
+import packet.ChatPacket;
 import packet.LoginPacket;
 import packet.LogoutPacket;
 import packet.RegisterPacket;
@@ -39,6 +40,8 @@ public class SubPacket implements Runnable {
                 break;
 
             case PacketType.CAHT:
+                ChatPacket chatPacket = (ChatPacket) packet;
+                new ChatLogic(chatPacket, channel).deal();
                 break;
         }
     }
