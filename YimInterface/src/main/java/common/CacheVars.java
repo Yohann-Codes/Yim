@@ -1,6 +1,6 @@
 package common;
 
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.Channel;
 
 /**
  * 缓存变量
@@ -10,6 +10,6 @@ import io.netty.channel.ChannelHandlerContext;
 public class CacheVars {
     // 用户名
     public static String username;
-    // ctx
-    public static ChannelHandlerContext ctx;
+    // Channel
+    public static Channel channel;
 }

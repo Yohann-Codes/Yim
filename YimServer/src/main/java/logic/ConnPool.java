@@ -1,6 +1,6 @@
 package logic;
 
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.Channel;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,18 +15,18 @@ import java.util.Set;
 public class ConnPool {
 
     // 用于存放在线用户的username和ChannelHandlerContext
-    private static Map<String, ChannelHandlerContext> connsMap =
-            new HashMap<String, ChannelHandlerContext>();
+    private static Map<String, Channel> connsMap =
+            new HashMap<String, Channel>();
 
     /**
      * 添加连接
      *
      * @param username
-     * @param ctx
+     * @param channel
      * @return
      */
-    public synchronized static boolean add(String username, ChannelHandlerContext ctx) {
-        ChannelHandlerContext result = connsMap.put(username, ctx);
+    public synchronized static boolean add(String username, Channel channel) {
+        Channel result = connsMap.put(username, channel);
         if (result == null) {
             return true;
         } else {
@@ -41,7 +41,7 @@ public class ConnPool {
      * @return
      */
     public synchronized static boolean remove(String username) {
-        ChannelHandlerContext result = connsMap.remove(username);
+        Channel result = connsMap.remove(username);
         if (result != null) {
             return true;
         } else {
@@ -55,22 +55,22 @@ public class ConnPool {
      * @param username
      * @return
      */
-    public synchronized static ChannelHandlerContext query(String username) {
+    public synchronized static Channel query(String username) {
         return connsMap.get(username);
     }
 
     /**
      * 查找连接
      *
-     * @param ctx
+     * @param channel
      * @return
      */
-    public synchronized static String query(ChannelHandlerContext ctx) {
-        Set<Map.Entry<String, ChannelHandlerContext>> entries = connsMap.entrySet();
-        Iterator<Map.Entry<String, ChannelHandlerContext>> ite = entries.iterator();
+    public synchronized static String query(Channel channel) {
+        Set<Map.Entry<String, Channel>> entries = connsMap.entrySet();
+        Iterator<Map.Entry<String, Channel>> ite = entries.iterator();
         while (ite.hasNext()) {
-            Map.Entry<String, ChannelHandlerContext> entry = ite.next();
-            if (ctx.equals(entry.getValue())) {
+            Map.Entry<String, Channel> entry = ite.next();
+            if (channel.equals(entry.getValue())) {
                 return entry.getKey();
             }
         }

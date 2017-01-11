@@ -59,6 +59,8 @@ public class Service {
             ChannelFuture future = bootstrap.bind(port).sync();
             future.channel().closeFuture().sync();
 
+            MyLog.sysLogger("服务器关闭");
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {

@@ -1,5 +1,6 @@
 package transport;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
@@ -13,21 +14,20 @@ import packet.HeartbeatPacket;
  * Created by yohann on 2017/1/9.
  */
 public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
-    // Readerhandler的ctx
-    private ChannelHandlerContext readerCtx;
+    private Channel channel;
     private String username;
 
     // 丢失的心跳数
     private int counter = 0;
 
-    public HeartbeatHandler(ChannelHandlerContext ctx) {
-        readerCtx = ctx;
+    public HeartbeatHandler(Channel channel) {
+        this.channel = channel;
     }
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (username == null) {
-            username = ConnPool.query(readerCtx);
+            username = ConnPool.query(channel);
         }
         // 心跳丢失
         counter++;
@@ -51,7 +51,7 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof HeartbeatPacket) {
             if (username == null) {
-                username = ConnPool.query(readerCtx);
+                username = ConnPool.query(channel);
             }
             // 心跳丢失清零
             counter = 0;

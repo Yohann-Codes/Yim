@@ -1,9 +1,9 @@
 package logic;
 
 import dao.UserDao;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 import log.MyLog;
 import packet.LoginPacket;
@@ -21,12 +21,12 @@ import java.util.List;
  */
 public class LoginLogic {
     private LoginPacket loginPacket;
-    private ChannelHandlerContext ctx;
+    private Channel channel;
     private String username;
 
-    public LoginLogic(LoginPacket loginPacket, ChannelHandlerContext ctx) {
+    public LoginLogic(LoginPacket loginPacket, Channel channel) {
         this.loginPacket = loginPacket;
-        this.ctx = ctx;
+        this.channel = channel;
     }
 
     /**
@@ -63,18 +63,18 @@ public class LoginLogic {
      * @param respLoginPacket
      */
     public void success(RespLoginPacket respLoginPacket) {
-        boolean result = ConnPool.add(username, ctx);
+        boolean result = ConnPool.add(username, channel);
         if (result) {
             respLoginPacket.setSuccessful(true);
-            ChannelFuture future = ctx.writeAndFlush(respLoginPacket);
+            ChannelFuture future = channel.writeAndFlush(respLoginPacket);
             future.addListener(new ChannelFutureListener() {
                 public void operationComplete(ChannelFuture future) throws Exception {
                     if (future.isSuccess()) {
                         MyLog.userLogger(username + " 登录成功");
                         // 开启心跳检测
                         MyLog.userLogger(username + " 开启心跳检测");
-                        ctx.pipeline().addAfter("IdleStateHandler",
-                                "HeartbeatHandler", new HeartbeatHandler(ctx));
+                        channel.pipeline().addAfter("IdleStateHandler",
+                                "HeartbeatHandler", new HeartbeatHandler(channel));
                     } else {
                         ConnPool.remove(username);
                     }
@@ -92,11 +92,11 @@ public class LoginLogic {
      */
     public void defeat(RespLoginPacket respLoginPacket) {
         respLoginPacket.setSuccessful(false);
-        ChannelFuture future = ctx.writeAndFlush(respLoginPacket);
+        ChannelFuture future = channel.writeAndFlush(respLoginPacket);
         future.addListener(new ChannelFutureListener() {
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                    ctx.channel().close();
+                    channel.close();
                     MyLog.userLogger(username + " 登录失败");
                 }
             }

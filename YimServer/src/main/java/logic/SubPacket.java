@@ -2,8 +2,10 @@ package logic;
 
 import common.Packet;
 import common.PacketType;
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.Channel;
 import packet.LoginPacket;
+import packet.LogoutPacket;
+import packet.RegisterPacket;
 
 /**
  * 判断包类型，分发处理
@@ -12,18 +14,31 @@ import packet.LoginPacket;
  */
 public class SubPacket implements Runnable {
     private Packet packet;
-    private ChannelHandlerContext ctx;
+    private Channel channel;
 
-    public SubPacket(Packet packet, ChannelHandlerContext ctx) {
+    public SubPacket(Packet packet, Channel channel) {
         this.packet = packet;
-        this.ctx = ctx;
+        this.channel = channel;
     }
 
     public void run() {
         switch (packet.packetType) {
             case PacketType.LOGIN:
                 LoginPacket loginPacket = (LoginPacket) packet;
-                new LoginLogic(loginPacket, ctx).deal();
+                new LoginLogic(loginPacket, channel).deal();
+                break;
+
+            case PacketType.LOGOUT:
+                LogoutPacket logoutPacket = (LogoutPacket) packet;
+                new LogoutLogic(logoutPacket, channel).deal();
+                break;
+
+            case PacketType.REGISTER:
+                RegisterPacket registerPacket = (RegisterPacket) packet;
+                new RegLogic(registerPacket, channel).deal();
+                break;
+
+            case PacketType.CAHT:
                 break;
         }
     }

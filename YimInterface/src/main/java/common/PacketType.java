@@ -32,4 +32,6 @@ public class PacketType {
     public static final int USER_INFO = 0x0c;
     // 登录响应数据包
     public static final int RESP_LOGIN = 0x0d;
+    // 注册响应数据包
+    public static final int RESP_REG = 0x0e;
 }

@@ -1,6 +1,7 @@
 package interfaces;
 
 import common.CacheVars;
+import packet.LogoutPacket;
 
 /**
  * 登出
@@ -9,6 +10,8 @@ import common.CacheVars;
  */
 public class Logout {
     public void execute() {
-        CacheVars.ctx.channel().close();
+        LogoutPacket logoutPacket = new LogoutPacket();
+        logoutPacket.setUsername(CacheVars.username);
+        CacheVars.channel.writeAndFlush(logoutPacket);
     }
 }

@@ -3,8 +3,9 @@ package interfaces;
 import common.CacheVars;
 import common.Packet;
 import common.PacketType;
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.ReferenceCountUtil;
 import packet.RespLoginPacket;
+import packet.RespRegPacket;
 import trasport.HeartbeatHandler;
 
 /**
@@ -14,11 +15,9 @@ import trasport.HeartbeatHandler;
  */
 public class SubPacket {
     private Packet packet;
-    private ChannelHandlerContext ctx;
 
-    public SubPacket(Packet packet, ChannelHandlerContext ctx) {
+    public SubPacket(Packet packet) {
         this.packet = packet;
-        this.ctx = ctx;
     }
 
     public void deal() {
@@ -26,6 +25,11 @@ public class SubPacket {
             case PacketType.RESP_LOGIN:
                 RespLoginPacket respLoginPacket = (RespLoginPacket) packet;
                 dealRespLogin(respLoginPacket);
+                break;
+
+            case PacketType.RESP_REG:
+                RespRegPacket respRegPacket = (RespRegPacket) packet;
+                dealRespReg(respRegPacket);
                 break;
         }
     }
@@ -39,13 +43,27 @@ public class SubPacket {
         if (respLoginPacket.isSuccessful()) {
             String username = respLoginPacket.getUsername();
             CacheVars.username = username;
-            CacheVars.ctx = ctx;
             // 启动心跳
-            ctx.pipeline().addAfter("IdleStateHandler", "HeartbeatHandler",
+            CacheVars.channel.pipeline().addAfter("IdleStateHandler", "HeartbeatHandler",
                     new HeartbeatHandler(username));
             System.out.println("Success");
         } else {
             System.out.println("Defeat");
         }
+        ReferenceCountUtil.release(respLoginPacket);
+    }
+
+    /**
+     * 注册响应数据包
+     *
+     * @param respRegPacket
+     */
+    public void dealRespReg(RespRegPacket respRegPacket) {
+        if (respRegPacket.isSuccessful()) {
+            System.out.println("Success");
+        } else {
+            System.out.println("Default");
+        }
+        ReferenceCountUtil.release(respRegPacket);
     }
 }

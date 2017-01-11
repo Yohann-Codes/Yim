@@ -21,14 +21,14 @@ public class ReaderHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // 与服务器连接成功
-        conn.onFinishConnect(ctx);
+        conn.onFinishConnect();
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof Packet) {
             Packet packet = (Packet) msg;
-            new SubPacket(packet, ctx).deal();
+            new SubPacket(packet).deal();
         }
     }
 }

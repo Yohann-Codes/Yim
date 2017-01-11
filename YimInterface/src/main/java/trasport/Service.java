@@ -1,5 +1,6 @@
 package trasport;
 
+import common.CacheVars;
 import interfaces.Connection;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -34,9 +35,11 @@ public class Service {
                     .group(workerGroup)
                     .channel(NioSocketChannel.class)
                     .handler(new ChannelInitializer<SocketChannel>() {
+
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
+                            CacheVars.channel = pipeline.channel();
                             pipeline.addLast("PacketCodec", new PacketCodec());
                             pipeline.addLast("IdleStateHandler", new IdleStateHandler(0, 5, 0));
                             pipeline.addLast("ReaderHandler", new ReaderHandler(conn));
@@ -45,6 +48,10 @@ public class Service {
                     .option(ChannelOption.SO_KEEPALIVE, true);
 
             ChannelFuture future = bootstrap.connect(host, port).sync();
+
+            // 缓存通道
+            CacheVars.channel = future.channel();
+
             future.channel().closeFuture().sync();
 
         } catch (InterruptedException e) {

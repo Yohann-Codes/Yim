@@ -13,9 +13,7 @@ public class Connection {
 
     /**
      * 连接成功
-     *
-     * @param ctx
      */
-    public void onFinishConnect(ChannelHandlerContext ctx) {
+    public void onFinishConnect() {
     }
 }

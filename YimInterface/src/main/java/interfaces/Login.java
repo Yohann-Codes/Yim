@@ -1,7 +1,7 @@
 package interfaces;
 
+import common.CacheVars;
 import common.Constants;
-import io.netty.channel.ChannelHandlerContext;
 import packet.LoginPacket;
 import trasport.Service;
 
@@ -31,18 +31,18 @@ public class Login extends Connection {
     }
 
     @Override
-    public void onFinishConnect(ChannelHandlerContext ctx) {
+    public void onFinishConnect() {
         System.out.println("连接成功 --> 开始登录");
         // 登录
-        doLogin(ctx, username, password);
+        doLogin(username, password);
     }
 
-    public void doLogin(ChannelHandlerContext ctx, String username, String password) {
+    public void doLogin(String username, String password) {
         // 创建数据包
         LoginPacket loginPacket = new LoginPacket();
         loginPacket.setUsername(username);
         loginPacket.setPassword(password);
         // 发送数据包
-        ctx.writeAndFlush(loginPacket);
+        CacheVars.channel.writeAndFlush(loginPacket);
     }
 }

@@ -1,5 +1,6 @@
 package trasport;
 
+import common.CacheVars;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import packet.HeartbeatPacket;
