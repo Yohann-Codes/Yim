@@ -7,7 +7,7 @@ package common;
  */
 public class DBConstants {
     // 地址
-    public static final String URL = "jdbc:mysql://123.206.72.175:3306/yim";
+    public static final String URL = "jdbc:mysql://localhost:3306/yim";
     // 用户名
     public static final String USERNAME = "root";
     // 密码

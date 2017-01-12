@@ -1,11 +1,13 @@
 package logic;
 
+import dao.OfflineMsgDao;
 import dao.UserDao;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.util.ReferenceCountUtil;
 import log.MyLog;
+import packet.ChatPacket;
 import packet.LoginPacket;
 import packet.RespLoginPacket;
 import packet.UserInfoPacket;
@@ -75,6 +77,8 @@ public class LoginLogic {
                         MyLog.userLogger(username + " 开启心跳检测");
                         channel.pipeline().addAfter("IdleStateHandler",
                                 "HeartbeatHandler", new HeartbeatHandler(channel));
+                        // 发送离线消息
+                        sendOfflineMsg();
                     } else {
                         ConnPool.remove(username);
                     }
@@ -101,5 +105,37 @@ public class LoginLogic {
                 }
             }
         });
+    }
+
+    /**
+     * 发送离线消息
+     */
+    public void sendOfflineMsg() {
+        try {
+            // 查询消息
+            List<ChatPacket> chatPackets = new OfflineMsgDao().queryMsg(username);
+            if (chatPackets.size() != 0) {
+                // 一个一个发送
+                for (int i = 0; i < chatPackets.size(); i++) {
+                    ChatPacket chatPacket = chatPackets.get(i);
+                    channel.writeAndFlush(chatPacket);
+                    MyLog.sysLogger("离线消息 " + chatPacket.getSrcUsername()
+                            + "-->" + chatPacket.getDesUsername() + " 发送成功");
+                }
+                // 删除离线消息
+                int row = new OfflineMsgDao().deleteMsg(username);
+                if (row == chatPackets.size()) {
+                    MyLog.sysLogger("删除离线消息 成功");
+                } else {
+                    MyLog.sysLogger("删除离线消息 失败");
+                }
+            } else {
+                return;
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

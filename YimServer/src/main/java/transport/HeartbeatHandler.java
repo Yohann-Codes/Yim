@@ -55,7 +55,7 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
             }
             // 心跳丢失清零
             counter = 0;
-            MyLog.userLogger(username + " 收到心跳包");
+//            MyLog.userLogger(username + " 收到心跳包");
             ReferenceCountUtil.release(msg);
         } else {
             ctx.fireChannelRead(msg);

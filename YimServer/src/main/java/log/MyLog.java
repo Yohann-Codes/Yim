@@ -16,7 +16,7 @@ public class MyLog {
      */
     public static void sysLogger(String msg) {
         System.out.println("System ->  " + msg + "  " + Thread.currentThread().getName() + "  " +
-                new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss")
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                         .format(new Date(System.currentTimeMillis())));
     }
 
@@ -27,7 +27,7 @@ public class MyLog {
      */
     public static void userLogger(String msg) {
         System.out.println("Users ->  " + msg + "  " +  Thread.currentThread().getName() + "  " +
-                new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss")
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                         .format(new Date(System.currentTimeMillis())));
     }
 }

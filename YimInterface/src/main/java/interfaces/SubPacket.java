@@ -102,9 +102,9 @@ public class SubPacket {
      * @param chatPacket
      */
     public void dealChat(ChatPacket chatPacket) {
-        String time = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss").format(new Date(chatPacket.getTime()));
+        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(chatPacket.getTime()));
         System.out.println(chatPacket.getSrcUsername() + ": "
-                + chatPacket.getMessage() + "   [ " + time + " ]");
+                + chatPacket.getMessage() + "   [" + time + "]");
         ReferenceCountUtil.release(chatPacket);
     }
 }
