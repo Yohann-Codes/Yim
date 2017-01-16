@@ -1,10 +1,9 @@
 package dao;
 
-import common.DBConstants;
+import common.Config;
+import org.apache.log4j.Logger;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Properties;
 
 /**
@@ -12,10 +11,13 @@ import java.util.Properties;
  * <p>
  * Created by yohann on 2017/1/8.
  */
-public class Dao {
+public abstract class Dao {
+    public static final Logger LOGGER = Logger.getLogger(Dao.class);
 
-    //数据库连接对象
-    public Connection conn;
+    //需要关闭的资源
+    protected Connection conn;
+    protected PreparedStatement pstmt;
+    protected ResultSet resultSet;
 
     /**
      * 连接MySQL数据库
@@ -29,11 +31,16 @@ public class Dao {
 
         //准备数据库连接数据
         Properties info = new Properties();
-        String url = DBConstants.URL;
-        info.put("user", DBConstants.USERNAME);
-        info.put("password", DBConstants.PASSWORD);
+        String url = Config.DB_URL;
+        info.put("user", Config.DB_USERNAME);
+        info.put("password", Config.DB_PASSWORD);
 
         //获取连接对象
         conn = DriverManager.getConnection(url, info);
     }
+
+    /**
+     * 关闭数据库资源
+     */
+    public abstract void close();
 }

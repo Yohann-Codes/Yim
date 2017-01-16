@@ -1,10 +1,10 @@
 package transport;
 
-import common.Packet;
+import dispatch.Dispatch;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import logic.SubPacket;
+import packet.Packet;
 
 import java.util.concurrent.ExecutorService;
 
@@ -34,7 +34,7 @@ public class ReaderHandler extends ChannelInboundHandlerAdapter {
             Packet packet = (Packet) msg;
             // 将数据包传递给线程池处理
             if (tPool != null) {
-                tPool.execute(new SubPacket(packet, channel));
+                tPool.execute(new Dispatch(packet, channel));
             }
         }
     }

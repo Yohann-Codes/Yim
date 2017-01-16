@@ -1,8 +1,7 @@
 package launcher;
 
-import common.SerConstants;
-import log.MyLog;
-import transport.Service;
+import common.Config;
+import org.apache.log4j.Logger;
 
 /**
  * 启动类
@@ -10,9 +9,11 @@ import transport.Service;
  * Created by yohann on 2017/1/8.
  */
 public class Launcher {
+    private static final Logger LOGGER = Logger.getLogger(Launcher.class);
+
     public static void main(String[] args) {
-        // 配置线程池大小和端口
-        MyLog.sysLogger("开始启动服务器程序");
-        new Service(SerConstants.NTHREADS).start(SerConstants.PORT);
+        LOGGER.info("开始启动服务器程序");
+        // 配置线程池大小，监听端口
+        new Service().start(Config.PORT);
     }
 }
