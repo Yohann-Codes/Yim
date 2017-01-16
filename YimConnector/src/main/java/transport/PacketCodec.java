@@ -28,9 +28,11 @@ public class PacketCodec extends ByteToMessageCodec<Packet> {
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        ObjectInputStream ois = new ObjectInputStream(new ByteBufInputStream(in));
+        ByteBufInputStream bis = new ByteBufInputStream(in);
+        ObjectInputStream ois = new ObjectInputStream(bis);
         Packet msg = (Packet) ois.readObject();
         ois.close();
+        bis.close();
         out.add(msg);
     }
 }

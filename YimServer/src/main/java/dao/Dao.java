@@ -11,7 +11,7 @@ import java.util.Properties;
  * <p>
  * Created by yohann on 2017/1/8.
  */
-public abstract class Dao {
+public class Dao {
     public static final Logger LOGGER = Logger.getLogger(Dao.class);
 
     //需要关闭的资源
@@ -42,5 +42,27 @@ public abstract class Dao {
     /**
      * 关闭数据库资源
      */
-    public abstract void close();
+    public void close() {
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                LOGGER.warn("MySQL关闭ResultSet出现异常", e);
+            }
+        }
+        if (pstmt != null) {
+            try {
+                pstmt.close();
+            } catch (SQLException e) {
+                LOGGER.warn("MySQL关闭PreparedStatement出现异常", e);
+            }
+        }
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                LOGGER.warn("MySQL关闭Connection出现异常", e);
+            }
+        }
+    }
 }

@@ -11,12 +11,12 @@ import transport.Service;
  *
  * Future future = new Login(username, password).execute();
  * future.addListener(new LoginFutureListener() {
- *     public void operationComplete(LoginRespPacket packet) {
- *         if (packet.isSuccess()) {
- *             System.out.println("登录成功 ");
- *         } else {
- *             System.out.println("登录失败 " + packet.getHint());
- *         }
+ *     public void onSuccess() {
+ *         System.out.println("登录成功");
+ *     }
+ *
+ *     public void onFailure(String hint) {
+ *         System.out.println("登录失败，错误提示：" + hint);
  *     }
  * });
  *
@@ -47,7 +47,7 @@ public class Login implements OnConnectionListener {
             }
         }.start();
 
-        return Constants.FUTURE;
+        return Future.getFuture();
     }
 
     public void onConnetionComplete() {

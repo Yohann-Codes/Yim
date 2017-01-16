@@ -7,6 +7,8 @@ import account.logout.LogoutReqPacket;
 import account.register.RegReqPacket;
 import account.register.RegisterLogic;
 import io.netty.channel.Channel;
+import message.person.PersonMsgLogic;
+import message.person.PersonMsgReqPacket;
 import packet.Packet;
 import packet.PacketType;
 
@@ -41,6 +43,11 @@ public class Dispatch implements Runnable {
             case PacketType.REGISTER_REQ:
                 RegReqPacket regReqPacket = (RegReqPacket) packet;
                 new RegisterLogic(regReqPacket, channel).deal();
+                break;
+
+            case PacketType.PERSON_MSG_REQ:
+                PersonMsgReqPacket personMsgReqPacket = (PersonMsgReqPacket) packet;
+                new PersonMsgLogic(personMsgReqPacket, channel).deal();
                 break;
         }
     }

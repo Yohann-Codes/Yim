@@ -11,12 +11,12 @@ import transport.Service;
  *
  * Future future = new Register(username, password).execute();
  * future.addListener(new RegisterFutureListener() {
- *     public void onFinishRegister(RegRespPacket regRespPacket) {
- *         if (regRespPacket.isSuccess()) {
- *             System.out.println("注册成功");
- *         } else {
- *             System.out.println("注册失败 " + regRespPacket.getHint());
- *         }
+ *     public void onSuccess() {
+ *         System.out.println("注册成功");
+ *     }
+ *
+ *     public void onFailure(String hint) {
+ *         System.out.println("注册失败，错误提示：" + hint);
  *     }
  * });
  *
@@ -44,7 +44,7 @@ public class Register implements OnConnectionListener {
             }
         }.start();
 
-        return Constants.FUTURE;
+        return Future.getFuture();
     }
 
     public void onConnetionComplete() {

@@ -1,14 +1,17 @@
 package account.login;
 
+import bean.OfflineMsgBean;
 import bean.UserBean;
 import connection.ConnPool;
 import connection.TokenFactory;
 import connection.TokenPool;
+import dao.OfflineMsgDao;
 import dao.UserDao;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.util.ReferenceCountUtil;
+import message.person.PersonMsgReqPacket;
 import org.apache.log4j.Logger;
 import transport.HeartbeatHandler;
 
@@ -38,12 +41,10 @@ public class LoginLogic {
     public void deal() {
         username = loginReqPacket.getUsername();
         String password = loginReqPacket.getPassword();
-        LOGGER.debug("username=" + username + " password=" + password);
+        UserDao userDao = null;
         try {
-            UserDao userDao = new UserDao();
+            userDao = new UserDao();
             List<UserBean> users = userDao.queryByUsername(username);
-            // 关闭数据库资源
-            userDao.close();
             if (users.size() == 1) {
                 if (password.equals(users.get(0).getPassword())) {
                     // 成功
@@ -61,6 +62,7 @@ public class LoginLogic {
         } catch (SQLException e) {
             LOGGER.warn("MySQL连接异常", e);
         } finally {
+            userDao.close();
             ReferenceCountUtil.release(loginReqPacket);
         }
     }
@@ -88,8 +90,8 @@ public class LoginLogic {
                         LOGGER.info(username + " 开启心跳检测");
                         channel.pipeline().addAfter("IdleStateHandler",
                                 "HeartbeatHandler", new HeartbeatHandler(channel));
-                        // 发送离线消息和通知
-
+                        // 发送离线消息
+                        sendOfflineMsg();
                     } else {
                         LOGGER.warn(username + " 登录成功响应包发送失败");
                         ConnPool.remove(username);
@@ -121,5 +123,47 @@ public class LoginLogic {
                 }
             }
         });
+    }
+
+    /**
+     * 发送离线消息
+     */
+    public void sendOfflineMsg() {
+        OfflineMsgDao offlineMsgDao = null;
+        try {
+            offlineMsgDao = new OfflineMsgDao();
+            // 查询消息
+            List<OfflineMsgBean> offlineMsgs = offlineMsgDao.queryMsg(username);
+            if (offlineMsgs.size() != 0) {
+                // 一个一个发送
+                for (int i = 0; i < offlineMsgs.size(); i++) {
+                    OfflineMsgBean offlineMsgBean = offlineMsgs.get(i);
+                    PersonMsgReqPacket personMsgReqPacket =
+                            new PersonMsgReqPacket(
+                                    offlineMsgBean.getSender(),
+                                    offlineMsgBean.getReceiver(),
+                                    offlineMsgBean.getMessage(),
+                                    offlineMsgBean.getTime());
+                    channel.writeAndFlush(personMsgReqPacket);
+                    LOGGER.info("离线消息 " + offlineMsgBean.getSender()
+                            + "-->" + offlineMsgBean.getReceiver() + " 发送成功");
+                }
+                // 删除离线消息
+                int row = new OfflineMsgDao().removeMsg(username);
+                if (row == offlineMsgs.size()) {
+                    LOGGER.info("删除离线消息 成功");
+                } else {
+                    LOGGER.warn("删除离线消息 失败");
+                }
+            } else {
+                return;
+            }
+        } catch (ClassNotFoundException e) {
+            LOGGER.warn("MySQL连接异常", e);
+        } catch (SQLException e) {
+            LOGGER.warn("MySQL连接异常", e);
+        } finally {
+            offlineMsgDao.close();
+        }
     }
 }

@@ -32,9 +32,10 @@ public class RegisterLogic {
      */
     public void deal() {
         username = regReqPacket.getUsername();
+        UserDao userDao = null;
         // 查询用户名是否已存在
         try {
-            UserDao userDao = new UserDao();
+            userDao = new UserDao();
             List<UserBean> users = userDao.queryByUsername(username);
             if (users.size() == 0) {
                 // 添加用户
@@ -55,6 +56,8 @@ public class RegisterLogic {
             LOGGER.warn("MySQL连接异常", e);
         } catch (SQLException e) {
             LOGGER.warn("MySQL连接异常", e);
+        } finally {
+            userDao.close();
         }
     }
 
