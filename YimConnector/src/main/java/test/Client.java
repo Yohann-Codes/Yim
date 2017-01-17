@@ -3,10 +3,10 @@ package test;
 import account.login.Login;
 import account.logout.Logout;
 import account.register.Register;
-import future.Future;
-import future.LoginFutureListener;
-import future.PersonMsgFutureListener;
-import future.RegisterFutureListener;
+import common.UserInfo;
+import friends.FriendAdd;
+import friends.FriendAddReqPacket;
+import future.*;
 import message.person.PersonMsg;
 
 import java.util.HashMap;
@@ -30,6 +30,7 @@ public class Client {
         cMap.put("logout", 2);
         cMap.put("register", 3);
         cMap.put("send", 4);
+        cMap.put("add", 5);
 
         Scanner sc = new Scanner(System.in);
         while (true) {
@@ -49,9 +50,25 @@ public class Client {
                     case 4:
                         sendPersonMsg();
                         break;
+                    case 5:
+                        addFriend();
+                        break;
                 }
             }
         }
+    }
+
+    private static void addFriend() {
+        Future future = new FriendAdd(UserInfo.username, cArr[1], cArr[2]).execute();
+        future.addListener(new FriendAddFutureListener() {
+            public void onSuccess() {
+                System.out.println("发送成功，等待对方处理");
+            }
+
+            public void onFailure(String hint) {
+                System.out.println("发送失败，错误提示：" + hint);
+            }
+        });
     }
 
     private static void sendPersonMsg() {

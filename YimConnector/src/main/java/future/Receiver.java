@@ -24,4 +24,12 @@ public interface Receiver {
      * @param time
      */
     void receivePersonMessage(String sender, String message, long time);
+
+    /**
+     * 重写此方法来接收请求添加好友的通知
+     *
+     * @param requester
+     * @param info
+     */
+    void receiveFriendAddReq(String requester, String info);
 }

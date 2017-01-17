@@ -25,6 +25,7 @@ public class Future {
     private LoginFutureListener loginFutureListener;
     private RegisterFutureListener registerFutureListener;
     private PersonMsgFutureListener personMsgFutureListener;
+    private FriendAddFutureListener friendAddFutureListener;
 
     public void addReceiver(Receiver receiver) {
         this.receiver = receiver;
@@ -42,6 +43,10 @@ public class Future {
         personMsgFutureListener = listener;
     }
 
+    public void addListener(FriendAddFutureListener listener) {
+        friendAddFutureListener = listener;
+    }
+
     public Receiver getReceiver() {
         return receiver;
     }
@@ -56,5 +61,9 @@ public class Future {
 
     public PersonMsgFutureListener getPersonMsgFutureListener() {
         return personMsgFutureListener;
+    }
+
+    public FriendAddFutureListener getFriendAddFutureListener() {
+        return friendAddFutureListener;
     }
 }

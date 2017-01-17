@@ -5,8 +5,10 @@ import bean.UserBean;
 import connection.ConnPool;
 import connection.TokenFactory;
 import connection.TokenPool;
+import dao.FriendReqDao;
 import dao.OfflineMsgDao;
 import dao.UserDao;
+import friends.FriendAddReqPacket;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -62,7 +64,9 @@ public class LoginLogic {
         } catch (SQLException e) {
             LOGGER.warn("MySQL连接异常", e);
         } finally {
-            userDao.close();
+            if (userDao != null) {
+                userDao.close();
+            }
             ReferenceCountUtil.release(loginReqPacket);
         }
     }
@@ -92,6 +96,8 @@ public class LoginLogic {
                                 "HeartbeatHandler", new HeartbeatHandler(channel));
                         // 发送离线消息
                         sendOfflineMsg();
+                        // 发送离线通知
+                        sendOfflineNotice();
                     } else {
                         LOGGER.warn(username + " 登录成功响应包发送失败");
                         ConnPool.remove(username);
@@ -128,7 +134,7 @@ public class LoginLogic {
     /**
      * 发送离线消息
      */
-    public void sendOfflineMsg() {
+    private void sendOfflineMsg() {
         OfflineMsgDao offlineMsgDao = null;
         try {
             offlineMsgDao = new OfflineMsgDao();
@@ -163,7 +169,33 @@ public class LoginLogic {
         } catch (SQLException e) {
             LOGGER.warn("MySQL连接异常", e);
         } finally {
-            offlineMsgDao.close();
+            if (offlineMsgDao != null) {
+                offlineMsgDao.close();
+            }
+        }
+    }
+
+    /**
+     * 发送离线通知
+     */
+    private void sendOfflineNotice() {
+        FriendReqDao friendReqDao = null;
+        try {
+            friendReqDao = new FriendReqDao();
+            // 查询自己未处理的消息
+            List<FriendAddReqPacket> friendAddReqs = friendReqDao.queryUntreatReq(username);
+            if (friendAddReqs.size() != 0) {
+                for (int i = 0; i < friendAddReqs.size(); i++) {
+                    FriendAddReqPacket friendAddReqPacket = friendAddReqs.get(i);
+                    channel.writeAndFlush(friendAddReqPacket);
+                    LOGGER.info("添加好友请求 " + friendAddReqPacket.getUsername()
+                            + "-->" + friendAddReqPacket.getResponser() + " 发送成功");
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            LOGGER.warn("MySQL连接异常", e);
+        } catch (SQLException e) {
+            LOGGER.warn("MySQL连接异常", e);
         }
     }
 }

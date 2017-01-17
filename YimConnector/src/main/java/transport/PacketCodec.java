@@ -22,9 +22,10 @@ public class PacketCodec extends ByteToMessageCodec<Packet> {
         ObjectOutputStream oos = new ObjectOutputStream(bos);
         oos.writeObject(msg);
         oos.flush();
-        oos.close();
         byte[] bytes = bos.toByteArray();
         out.writeBytes(bytes);
+        oos.close();
+        bos.close();
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {

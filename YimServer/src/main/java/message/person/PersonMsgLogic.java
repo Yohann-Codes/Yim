@@ -102,8 +102,12 @@ public class PersonMsgLogic {
         } catch (SQLException e) {
             LOGGER.warn("MySQL连接异常", e);
         } finally {
-            userDao.close();
-            offlineMsgDao.close();
+            if (userDao != null) {
+                userDao.close();
+            }
+            if (offlineMsgDao != null) {
+                offlineMsgDao.close();
+            }
         }
     }
 

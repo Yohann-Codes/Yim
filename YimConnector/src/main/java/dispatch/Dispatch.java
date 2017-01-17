@@ -3,6 +3,8 @@ package dispatch;
 import account.login.LoginRespPacket;
 import account.register.RegRespPacket;
 import common.UserInfo;
+import friends.FriendAddReqPacket;
+import friends.FriendAddRespPacket;
 import future.*;
 import io.netty.util.ReferenceCountUtil;
 import message.person.PersonMsgReqPacket;
@@ -29,25 +31,31 @@ public class Dispatch {
             case PacketType.LOGIN_RESP:
                 LoginRespPacket loginRespPacket = (LoginRespPacket) packet;
                 login(loginRespPacket);
-                ReferenceCountUtil.release(loginRespPacket);
                 break;
 
             case PacketType.REGISTER_RESP:
                 RegRespPacket regRespPacket = (RegRespPacket) packet;
                 register(regRespPacket);
-                ReferenceCountUtil.release(regRespPacket);
                 break;
 
             case PacketType.PERSON_MSG_RESP:
                 PersonMsgRespPacket personMsgRespPacket = (PersonMsgRespPacket) packet;
-                personMsgReq(personMsgRespPacket);
-                ReferenceCountUtil.release(personMsgRespPacket);
+                personMsg(personMsgRespPacket);
                 break;
 
             case PacketType.PERSON_MSG_REQ:
                 PersonMsgReqPacket personMsgReqPacket = (PersonMsgReqPacket) packet;
                 receivePersonMsg(personMsgReqPacket);
-                ReferenceCountUtil.release(personMsgReqPacket);
+                break;
+
+            case PacketType.FRIEND_ADD_RESP:
+                FriendAddRespPacket friendAddRespPacket = (FriendAddRespPacket) packet;
+                friendAddResp(friendAddRespPacket);
+                break;
+
+            case PacketType.FRIEND_ADD_REQ:
+                FriendAddReqPacket friendAddReqPacket = (FriendAddReqPacket) packet;
+                friendAddReq(friendAddReqPacket);
                 break;
         }
     }
@@ -71,6 +79,7 @@ public class Dispatch {
         } else {
             loginFutureListener.onFailure(loginRespPacket.getHint());
         }
+        ReferenceCountUtil.release(loginRespPacket);
     }
 
     /**
@@ -85,6 +94,7 @@ public class Dispatch {
         } else {
             registerFutureListener.onFailure(regRespPacket.getHint());
         }
+        ReferenceCountUtil.release(regRespPacket);
     }
 
     /**
@@ -92,13 +102,14 @@ public class Dispatch {
      *
      * @param personMsgRespPacket
      */
-    public void personMsgReq(PersonMsgRespPacket personMsgRespPacket) {
+    public void personMsg(PersonMsgRespPacket personMsgRespPacket) {
         PersonMsgFutureListener personMsgFutureListener = Future.getFuture().getPersonMsgFutureListener();
         if (personMsgRespPacket.isSuccess()) {
             personMsgFutureListener.onSuccess();
         } else {
             personMsgFutureListener.onFailure(personMsgRespPacket.getHint());
         }
+        ReferenceCountUtil.release(personMsgRespPacket);
     }
 
     /**
@@ -112,5 +123,34 @@ public class Dispatch {
         long time = personMsgReqPacket.getTime();
         Receiver receiver = Future.getFuture().getReceiver();
         receiver.receivePersonMessage(sender, message, time);
+        ReferenceCountUtil.release(personMsgReqPacket);
+    }
+
+    /**
+     * 接收添加好友响应信息
+     *
+     * @param friendAddRespPacket
+     */
+    public void friendAddResp(FriendAddRespPacket friendAddRespPacket) {
+        FriendAddFutureListener friendAddFutureListener = Future.getFuture().getFriendAddFutureListener();
+        if (friendAddRespPacket.isSuccess()) {
+            friendAddFutureListener.onSuccess();
+        } else {
+            friendAddFutureListener.onFailure(friendAddRespPacket.getHint());
+        }
+        ReferenceCountUtil.release(friendAddRespPacket);
+    }
+
+    /**
+     * 接收请求添加好友的消息
+     *
+     * @param friendAddReqPacket
+     */
+    public void friendAddReq(FriendAddReqPacket friendAddReqPacket) {
+        String username = friendAddReqPacket.getUsername();
+        String info = friendAddReqPacket.getInfo();
+        Receiver receiver = Future.getFuture().getReceiver();
+        receiver.receiveFriendAddReq(username, info);
+        ReferenceCountUtil.release(friendAddReqPacket);
     }
 }

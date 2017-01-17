@@ -1,6 +1,7 @@
 package account.register;
 
 import bean.UserBean;
+import dao.FriendDao;
 import dao.UserDao;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -33,14 +34,17 @@ public class RegisterLogic {
     public void deal() {
         username = regReqPacket.getUsername();
         UserDao userDao = null;
+        FriendDao friendDao = null;
         // 查询用户名是否已存在
         try {
             userDao = new UserDao();
+            friendDao = new FriendDao();
             List<UserBean> users = userDao.queryByUsername(username);
             if (users.size() == 0) {
                 // 添加用户
-                int row = userDao.insertUser(username, regReqPacket.getPassword());
-                if (row == 1) {
+                int r1 = userDao.insertUser(username, regReqPacket.getPassword());
+                int r2 = friendDao.insertAccount(username);
+                if (r1 == 1 && r2 == 1) {
                     // 成功
                     success();
                 } else {
@@ -57,7 +61,12 @@ public class RegisterLogic {
         } catch (SQLException e) {
             LOGGER.warn("MySQL连接异常", e);
         } finally {
-            userDao.close();
+            if (userDao != null) {
+                userDao.close();
+            }
+            if (friendDao != null) {
+                friendDao.close();
+            }
         }
     }
 
