@@ -8,6 +8,8 @@ import account.register.RegReqPacket;
 import account.register.RegisterLogic;
 import friends.FriendAddReqLogic;
 import friends.FriendAddReqPacket;
+import friends.FriendReplyReqLogic;
+import friends.FriendReplyReqPacket;
 import io.netty.channel.Channel;
 import message.person.PersonMsgLogic;
 import message.person.PersonMsgReqPacket;
@@ -55,6 +57,11 @@ public class Dispatch implements Runnable {
             case PacketType.FRIEND_ADD_REQ:
                 FriendAddReqPacket friendAddReqPacket = (FriendAddReqPacket) packet;
                 new FriendAddReqLogic(friendAddReqPacket, channel).deal();
+                break;
+
+            case PacketType.FRIEND_REPLY_REQ:
+                FriendReplyReqPacket friendReplyReqPacket = (FriendReplyReqPacket) packet;
+                new FriendReplyReqLogic(friendReplyReqPacket, channel).deal();
                 break;
         }
     }

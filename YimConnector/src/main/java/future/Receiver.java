@@ -16,6 +16,7 @@ package future;
  * Created by yohann on 2017/1/16.
  */
 public interface Receiver {
+
     /**
      * 重写此方法来接收个人消息
      *
@@ -32,4 +33,11 @@ public interface Receiver {
      * @param info
      */
     void receiveFriendAddReq(String requester, String info);
+
+    /**
+     * 重写此方法来接收添加好友的请求的处理结果
+     * @param responser
+     * @param isArgee
+     */
+    void receiveFriendReply(String responser, boolean isArgee);
 }

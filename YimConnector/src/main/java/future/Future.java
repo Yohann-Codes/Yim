@@ -9,6 +9,13 @@ package future;
 public class Future {
     private static Future future;
 
+    private Receiver receiver;
+    private LoginFutureListener loginFutureListener;
+    private RegisterFutureListener registerFutureListener;
+    private PersonMsgFutureListener personMsgFutureListener;
+    private FriendAddFutureListener friendAddFutureListener;
+    private FriendReplyFutureListener friendReplyFutureListener;
+
     private Future() {
     }
 
@@ -20,12 +27,6 @@ public class Future {
             return future;
         }
     }
-
-    private Receiver receiver;
-    private LoginFutureListener loginFutureListener;
-    private RegisterFutureListener registerFutureListener;
-    private PersonMsgFutureListener personMsgFutureListener;
-    private FriendAddFutureListener friendAddFutureListener;
 
     public void addReceiver(Receiver receiver) {
         this.receiver = receiver;
@@ -47,6 +48,10 @@ public class Future {
         friendAddFutureListener = listener;
     }
 
+    public void addListener(FriendReplyFutureListener listener) {
+        friendReplyFutureListener = listener;
+    }
+
     public Receiver getReceiver() {
         return receiver;
     }
@@ -65,5 +70,9 @@ public class Future {
 
     public FriendAddFutureListener getFriendAddFutureListener() {
         return friendAddFutureListener;
+    }
+
+    public FriendReplyFutureListener getFriendReplyFutureListener() {
+        return friendReplyFutureListener;
     }
 }

@@ -6,6 +6,7 @@ import account.register.Register;
 import common.UserInfo;
 import friends.FriendAdd;
 import friends.FriendAddReqPacket;
+import friends.FriendReply;
 import future.*;
 import message.person.PersonMsg;
 
@@ -31,6 +32,7 @@ public class Client {
         cMap.put("register", 3);
         cMap.put("send", 4);
         cMap.put("add", 5);
+        cMap.put("replyFriend", 6);
 
         Scanner sc = new Scanner(System.in);
         while (true) {
@@ -53,9 +55,31 @@ public class Client {
                     case 5:
                         addFriend();
                         break;
+                    case 6:
+                        friendReply();
+                        break;
                 }
             }
         }
+    }
+
+    private static void friendReply() {
+        Future future = null;
+        if (cArr[2].equals("yes")) {
+            future = new FriendReply(UserInfo.username, cArr[1], true).execute();
+        }
+        if (cArr[2].equals("no")) {
+            future = new FriendReply(UserInfo.username, cArr[1], false).execute();
+        }
+        future.addListener(new FriendReplyFutureListener() {
+            public void onSuccess() {
+                System.out.println("发送成功");
+            }
+
+            public void onFailure(String hint) {
+                System.out.println("发送失败，错误提示：" + hint);
+            }
+        });
     }
 
     private static void addFriend() {

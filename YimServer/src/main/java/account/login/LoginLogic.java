@@ -9,6 +9,7 @@ import dao.FriendReqDao;
 import dao.OfflineMsgDao;
 import dao.UserDao;
 import friends.FriendAddReqPacket;
+import friends.FriendReplyReqPacket;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -192,10 +193,27 @@ public class LoginLogic {
                             + "-->" + friendAddReqPacket.getResponser() + " 发送成功");
                 }
             }
+            // 查询别人已处理的请求
+            List<FriendReplyReqPacket> friendReplyReqs = friendReqDao.queryTreatedReq(username);
+            if (friendReplyReqs.size() != 0) {
+                for (int i = 0; i < friendReplyReqs.size(); i++) {
+                    FriendReplyReqPacket friendReplyReqPacket = friendReplyReqs.get(i);
+                    channel.writeAndFlush(friendReplyReqPacket);
+                    LOGGER.info("添加好友请求回复 " + friendReplyReqPacket.getRequester()
+                            + "-->" + friendReplyReqPacket.getUsername() + " 发送成功");
+                    // 删除
+                    friendReqDao.removeFriendReq(friendReplyReqPacket.getRequester(),
+                            friendReplyReqPacket.getUsername());
+                }
+            }
         } catch (ClassNotFoundException e) {
             LOGGER.warn("MySQL连接异常", e);
         } catch (SQLException e) {
             LOGGER.warn("MySQL连接异常", e);
+        } finally {
+            if (friendReqDao != null) {
+                friendReqDao.close();
+            }
         }
     }
 }

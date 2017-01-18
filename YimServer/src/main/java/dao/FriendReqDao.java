@@ -1,6 +1,7 @@
 package dao;
 
 import friends.FriendAddReqPacket;
+import friends.FriendReplyReqPacket;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -73,15 +74,15 @@ public class FriendReqDao extends Dao {
      *
      * @param requester
      * @param responser
-     * @param result
+     * @param result    yes or no
      * @return
      */
-    public int updateFriendReq(String requester, String responser, boolean result) {
+    public int updateFriendReq(String requester, String responser, String result) {
         String sql = "update friend_add_req set result = ? where requester = ? and responser = ?";
         int row = 0;
         try {
             pstmt = conn.prepareStatement(sql);
-            pstmt.setBoolean(1, result);
+            pstmt.setString(1, result);
             pstmt.setString(2, requester);
             pstmt.setString(3, responser);
             row = pstmt.executeUpdate();
@@ -116,5 +117,37 @@ public class FriendReqDao extends Dao {
             LOGGER.warn("MySQL查询好友请求出现异常", e);
         }
         return friendAddReqs;
+    }
+
+    /**
+     * 查询已被处理的请求
+     *
+     * @param requester
+     * @return
+     */
+    public List<FriendReplyReqPacket> queryTreatedReq(String requester) {
+        List<FriendReplyReqPacket> friendReplyReqs = new ArrayList<FriendReplyReqPacket>();
+        String sql = "SELECT * FROM friend_add_req WHERE requester = ? and result != ?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, requester);
+            pstmt.setString(2, "untreat");
+            resultSet = pstmt.executeQuery();
+            while (resultSet.next()) {
+                FriendReplyReqPacket friendReplyReqPacket = null;
+                String responser = resultSet.getString("responser");
+                String result = resultSet.getString("result");
+                if (result.equals("yes")) {
+                    friendReplyReqPacket = new FriendReplyReqPacket(responser, requester, true);
+                }
+                if (result.equals("no")) {
+                    friendReplyReqPacket = new FriendReplyReqPacket(responser, requester, false);
+                }
+                friendReplyReqs.add(friendReplyReqPacket);
+            }
+        } catch (SQLException e) {
+            LOGGER.warn("MySQL查询好友请求出现异常", e);
+        }
+        return friendReplyReqs;
     }
 }

@@ -5,6 +5,8 @@ import account.register.RegRespPacket;
 import common.UserInfo;
 import friends.FriendAddReqPacket;
 import friends.FriendAddRespPacket;
+import friends.FriendReplyReqPacket;
+import friends.FriendReplyRespPacket;
 import future.*;
 import io.netty.util.ReferenceCountUtil;
 import message.person.PersonMsgReqPacket;
@@ -56,6 +58,16 @@ public class Dispatch {
             case PacketType.FRIEND_ADD_REQ:
                 FriendAddReqPacket friendAddReqPacket = (FriendAddReqPacket) packet;
                 friendAddReq(friendAddReqPacket);
+                break;
+
+            case PacketType.FRIEND_REPLY_REQ:
+                FriendReplyReqPacket friendReplyReqPacket = (FriendReplyReqPacket) packet;
+                friendReplyReq(friendReplyReqPacket);
+                break;
+
+            case PacketType.FRIEND_REPLY_RESP:
+                FriendReplyRespPacket friendReplyRespPacket = (FriendReplyRespPacket) packet;
+                friendReplyResp(friendReplyRespPacket);
                 break;
         }
     }
@@ -152,5 +164,33 @@ public class Dispatch {
         Receiver receiver = Future.getFuture().getReceiver();
         receiver.receiveFriendAddReq(username, info);
         ReferenceCountUtil.release(friendAddReqPacket);
+    }
+
+    /**
+     * 接收添加好友请求的回复消息
+     *
+     * @param friendReplyReqPacket
+     */
+    public void friendReplyReq(FriendReplyReqPacket friendReplyReqPacket) {
+        String responser = friendReplyReqPacket.getUsername();
+        boolean isAgree = friendReplyReqPacket.isAgree();
+        Receiver receiver = Future.getFuture().getReceiver();
+        receiver.receiveFriendReply(responser, isAgree);
+        ReferenceCountUtil.release(friendReplyReqPacket);
+    }
+
+    /**
+     * 接收回复添加好友的请求的响应消息
+     *
+     * @param friendReplyRespPacket
+     */
+    public void friendReplyResp(FriendReplyRespPacket friendReplyRespPacket) {
+        FriendReplyFutureListener friendReplyFutureListener = Future.getFuture().getFriendReplyFutureListener();
+        if (friendReplyRespPacket.isSuccess()) {
+            friendReplyFutureListener.onSuccess();
+        } else {
+            friendReplyFutureListener.onFailure(friendReplyRespPacket.getHint());
+        }
+        ReferenceCountUtil.release(friendReplyRespPacket);
     }
 }

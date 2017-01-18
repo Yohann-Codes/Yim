@@ -94,6 +94,9 @@ public class FriendAddReqLogic {
         } catch (SQLException e) {
             LOGGER.warn("MySQL连接异常", e);
         } finally {
+            if (userDao != null) {
+                userDao.close();
+            }
             if (friendDao != null) {
                 friendDao.close();
             }
