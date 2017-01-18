@@ -5,7 +5,7 @@ import io.netty.channel.Channel;
 import java.util.List;
 
 /**
- * 用户的信息
+ * 保存用户登录的信息
  * <p>
  * Created by yohann on 2017/1/10.
  */

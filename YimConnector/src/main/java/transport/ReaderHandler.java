@@ -1,7 +1,6 @@
 package transport;
 
 import account.OnConnectionListener;
-import common.UserInfo;
 import dispatch.Dispatch;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

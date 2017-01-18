@@ -15,6 +15,11 @@ public class Future {
     private PersonMsgFutureListener personMsgFutureListener;
     private FriendAddFutureListener friendAddFutureListener;
     private FriendReplyFutureListener friendReplyFutureListener;
+    private FriendRemoveFutureListener friendRemoveFutureListener;
+    private InfoUpdateFutureListener infoUpdateFutureListener;
+    private InfoLookFutureListener infoLookFutureListener;
+    private FriendInfoFutureListener friendInfoFutureListener;
+    private AllFriendFutureListener allFriendFutureListener;
 
     private Future() {
     }
@@ -52,6 +57,27 @@ public class Future {
         friendReplyFutureListener = listener;
     }
 
+    public void addListener(FriendRemoveFutureListener listener) {
+        friendRemoveFutureListener = listener;
+    }
+
+    public void addListener(InfoUpdateFutureListener listener) {
+        infoUpdateFutureListener = listener;
+    }
+
+    public void addListener(InfoLookFutureListener listener) {
+        infoLookFutureListener = listener;
+    }
+
+    public void addListener(FriendInfoFutureListener listener) {
+        friendInfoFutureListener = listener;
+    }
+
+    public void addListener(AllFriendFutureListener listener) {
+        allFriendFutureListener = listener;
+    }
+
+
     public Receiver getReceiver() {
         return receiver;
     }
@@ -74,5 +100,25 @@ public class Future {
 
     public FriendReplyFutureListener getFriendReplyFutureListener() {
         return friendReplyFutureListener;
+    }
+
+    public FriendRemoveFutureListener getFriendRemoveFutureListener() {
+        return friendRemoveFutureListener;
+    }
+
+    public InfoUpdateFutureListener getInfoUpdateFutureListener() {
+        return infoUpdateFutureListener;
+    }
+
+    public InfoLookFutureListener getInfoLookFutureListener() {
+        return infoLookFutureListener;
+    }
+
+    public FriendInfoFutureListener getFriendInfoFutureListener() {
+        return friendInfoFutureListener;
+    }
+
+    public AllFriendFutureListener getAllFriendFutureListener() {
+        return allFriendFutureListener;
     }
 }

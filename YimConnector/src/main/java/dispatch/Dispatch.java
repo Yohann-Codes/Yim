@@ -1,12 +1,13 @@
 package dispatch;
 
 import account.login.LoginRespPacket;
+import account.person.AllFriendRespPacket;
+import account.person.FriendInfoRespPacket;
+import account.person.InfoLookRespPacket;
+import account.person.InfoUpdateRespPacket;
 import account.register.RegRespPacket;
 import common.UserInfo;
-import friends.FriendAddReqPacket;
-import friends.FriendAddRespPacket;
-import friends.FriendReplyReqPacket;
-import friends.FriendReplyRespPacket;
+import friends.*;
 import future.*;
 import io.netty.util.ReferenceCountUtil;
 import message.person.PersonMsgReqPacket;
@@ -69,6 +70,31 @@ public class Dispatch {
                 FriendReplyRespPacket friendReplyRespPacket = (FriendReplyRespPacket) packet;
                 friendReplyResp(friendReplyRespPacket);
                 break;
+
+            case PacketType.FRIEND_REMOVE_RESP:
+                FriendRemoveRespPacket friendRemoveRespPacket = (FriendRemoveRespPacket) packet;
+                friendRemoveResp(friendRemoveRespPacket);
+                break;
+
+            case PacketType.INFO_UPDATE_RESP:
+                InfoUpdateRespPacket infoUpdateRespPacket = (InfoUpdateRespPacket) packet;
+                infoUpdateResp(infoUpdateRespPacket);
+                break;
+
+            case PacketType.INFO_LOOK_RESP:
+                InfoLookRespPacket infoLookRespPacket = (InfoLookRespPacket) packet;
+                infoLookResp(infoLookRespPacket);
+                break;
+
+            case PacketType.FRIEND_INFO_RESP:
+                FriendInfoRespPacket friendInfoRespPacket = (FriendInfoRespPacket) packet;
+                friendInfo(friendInfoRespPacket);
+                break;
+
+            case PacketType.ALL_FRIEND_RESP:
+                AllFriendRespPacket allFriendRespPacket = (AllFriendRespPacket) packet;
+                allFriend(allFriendRespPacket);
+                break;
         }
     }
 
@@ -77,7 +103,7 @@ public class Dispatch {
      *
      * @param loginRespPacket
      */
-    public void login(LoginRespPacket loginRespPacket) {
+    private void login(LoginRespPacket loginRespPacket) {
         LoginFutureListener loginFutureListener = Future.getFuture().getLoginFutureListener();
         if (loginRespPacket.isSuccess()) {
             // 保存用户信息
@@ -99,7 +125,7 @@ public class Dispatch {
      *
      * @param regRespPacket
      */
-    public void register(RegRespPacket regRespPacket) {
+    private void register(RegRespPacket regRespPacket) {
         RegisterFutureListener registerFutureListener = Future.getFuture().getRegisterFutureListener();
         if (regRespPacket.isSuccess()) {
             registerFutureListener.onSuccess();
@@ -114,7 +140,7 @@ public class Dispatch {
      *
      * @param personMsgRespPacket
      */
-    public void personMsg(PersonMsgRespPacket personMsgRespPacket) {
+    private void personMsg(PersonMsgRespPacket personMsgRespPacket) {
         PersonMsgFutureListener personMsgFutureListener = Future.getFuture().getPersonMsgFutureListener();
         if (personMsgRespPacket.isSuccess()) {
             personMsgFutureListener.onSuccess();
@@ -129,7 +155,7 @@ public class Dispatch {
      *
      * @param personMsgReqPacket
      */
-    public void receivePersonMsg(PersonMsgReqPacket personMsgReqPacket) {
+    private void receivePersonMsg(PersonMsgReqPacket personMsgReqPacket) {
         String sender = personMsgReqPacket.getUsername();
         String message = personMsgReqPacket.getMessage();
         long time = personMsgReqPacket.getTime();
@@ -143,7 +169,7 @@ public class Dispatch {
      *
      * @param friendAddRespPacket
      */
-    public void friendAddResp(FriendAddRespPacket friendAddRespPacket) {
+    private void friendAddResp(FriendAddRespPacket friendAddRespPacket) {
         FriendAddFutureListener friendAddFutureListener = Future.getFuture().getFriendAddFutureListener();
         if (friendAddRespPacket.isSuccess()) {
             friendAddFutureListener.onSuccess();
@@ -158,7 +184,7 @@ public class Dispatch {
      *
      * @param friendAddReqPacket
      */
-    public void friendAddReq(FriendAddReqPacket friendAddReqPacket) {
+    private void friendAddReq(FriendAddReqPacket friendAddReqPacket) {
         String username = friendAddReqPacket.getUsername();
         String info = friendAddReqPacket.getInfo();
         Receiver receiver = Future.getFuture().getReceiver();
@@ -171,7 +197,7 @@ public class Dispatch {
      *
      * @param friendReplyReqPacket
      */
-    public void friendReplyReq(FriendReplyReqPacket friendReplyReqPacket) {
+    private void friendReplyReq(FriendReplyReqPacket friendReplyReqPacket) {
         String responser = friendReplyReqPacket.getUsername();
         boolean isAgree = friendReplyReqPacket.isAgree();
         Receiver receiver = Future.getFuture().getReceiver();
@@ -184,7 +210,7 @@ public class Dispatch {
      *
      * @param friendReplyRespPacket
      */
-    public void friendReplyResp(FriendReplyRespPacket friendReplyRespPacket) {
+    private void friendReplyResp(FriendReplyRespPacket friendReplyRespPacket) {
         FriendReplyFutureListener friendReplyFutureListener = Future.getFuture().getFriendReplyFutureListener();
         if (friendReplyRespPacket.isSuccess()) {
             friendReplyFutureListener.onSuccess();
@@ -192,5 +218,94 @@ public class Dispatch {
             friendReplyFutureListener.onFailure(friendReplyRespPacket.getHint());
         }
         ReferenceCountUtil.release(friendReplyRespPacket);
+    }
+
+    /**
+     * 接收删除好友响应
+     *
+     * @param friendRemoveRespPacket
+     */
+    private void friendRemoveResp(FriendRemoveRespPacket friendRemoveRespPacket) {
+        FriendRemoveFutureListener friendRemoveFutureListener = Future.getFuture().getFriendRemoveFutureListener();
+        if (friendRemoveRespPacket.isSuccess()) {
+            friendRemoveFutureListener.onSuccess();
+        } else {
+            friendRemoveFutureListener.onFailure(friendRemoveRespPacket.getHint());
+        }
+        ReferenceCountUtil.release(friendRemoveRespPacket);
+    }
+
+    /**
+     * 接收修改信息响应
+     *
+     * @param infoUpdateRespPacket
+     */
+    private void infoUpdateResp(InfoUpdateRespPacket infoUpdateRespPacket) {
+        InfoUpdateFutureListener infoUpdateFutureListener = Future.getFuture().getInfoUpdateFutureListener();
+        if (infoUpdateRespPacket.isSuccess()) {
+            infoUpdateFutureListener.onSuccess();
+        } else {
+            infoUpdateFutureListener.onFailure(infoUpdateRespPacket.getHint());
+        }
+        ReferenceCountUtil.release(infoUpdateRespPacket);
+    }
+
+    /**
+     * 接收查看个人信息响应
+     *
+     * @param infoLookRespPacket
+     */
+    private void infoLookResp(InfoLookRespPacket infoLookRespPacket) {
+        InfoLookFutureListener infoLookFutureListener = Future.getFuture().getInfoLookFutureListener();
+        if (infoLookRespPacket.isSuccess()) {
+            infoLookFutureListener.onSuccess(
+                    infoLookRespPacket.getUsername(),
+                    infoLookRespPacket.getName(),
+                    infoLookRespPacket.getSex(),
+                    infoLookRespPacket.getAge(),
+                    infoLookRespPacket.getPhone(),
+                    infoLookRespPacket.getAddress(),
+                    infoLookRespPacket.getIntroduction());
+        } else {
+            infoLookFutureListener.onFailure(infoLookRespPacket.getHint());
+        }
+        ReferenceCountUtil.release(infoLookRespPacket);
+    }
+
+    /**
+     * 接收好友信息
+     *
+     * @param friendInfoRespPacket
+     */
+    private void friendInfo(FriendInfoRespPacket friendInfoRespPacket) {
+        FriendInfoFutureListener friendInfoFutureListener = Future.getFuture().getFriendInfoFutureListener();
+        if (friendInfoRespPacket.isSuccess()) {
+            friendInfoFutureListener.onSuccess(
+                    friendInfoRespPacket.getUsername(),
+                    friendInfoRespPacket.getName(),
+                    friendInfoRespPacket.getSex(),
+                    friendInfoRespPacket.getAge(),
+                    friendInfoRespPacket.getPhone(),
+                    friendInfoRespPacket.getAddress(),
+                    friendInfoRespPacket.getIntroduction());
+        } else {
+            friendInfoFutureListener.onFailure(friendInfoRespPacket.getHint());
+        }
+        ReferenceCountUtil.release(friendInfoRespPacket);
+    }
+
+    /**
+     * 接收已添加好友
+     *
+     * @param allFriendRespPacket
+     */
+    private void allFriend(AllFriendRespPacket allFriendRespPacket) {
+        AllFriendFutureListener allFriendFutureListener = Future.getFuture().getAllFriendFutureListener();
+        if (allFriendRespPacket.isSuccess()) {
+            allFriendFutureListener.onExist(allFriendRespPacket.getFriendMap());
+        } else {
+            allFriendFutureListener.onNoExist();
+        }
+        ReferenceCountUtil.release(allFriendRespPacket);
     }
 }

@@ -4,12 +4,10 @@ import account.login.LoginLogic;
 import account.login.LoginReqPacket;
 import account.logout.LogoutLogic;
 import account.logout.LogoutReqPacket;
+import account.person.*;
 import account.register.RegReqPacket;
 import account.register.RegisterLogic;
-import friends.FriendAddReqLogic;
-import friends.FriendAddReqPacket;
-import friends.FriendReplyReqLogic;
-import friends.FriendReplyReqPacket;
+import friends.*;
 import io.netty.channel.Channel;
 import message.person.PersonMsgLogic;
 import message.person.PersonMsgReqPacket;
@@ -56,12 +54,37 @@ public class Dispatch implements Runnable {
 
             case PacketType.FRIEND_ADD_REQ:
                 FriendAddReqPacket friendAddReqPacket = (FriendAddReqPacket) packet;
-                new FriendAddReqLogic(friendAddReqPacket, channel).deal();
+                new FriendAddLogic(friendAddReqPacket, channel).deal();
                 break;
 
             case PacketType.FRIEND_REPLY_REQ:
                 FriendReplyReqPacket friendReplyReqPacket = (FriendReplyReqPacket) packet;
-                new FriendReplyReqLogic(friendReplyReqPacket, channel).deal();
+                new FriendReplyLogic(friendReplyReqPacket, channel).deal();
+                break;
+
+            case PacketType.FRIEND_REMOVE_REQ:
+                FriendRemoveReqPacket friendRemoveReqPacket = (FriendRemoveReqPacket) packet;
+                new FriendRemoveLogic(friendRemoveReqPacket, channel).deal();
+                break;
+
+            case PacketType.INFO_UPDATE_REQ:
+                InfoUpdateReqPacket infoUpdateReqPacket = (InfoUpdateReqPacket) packet;
+                new InfoUpdateLogic(infoUpdateReqPacket, channel).deal();
+                break;
+
+            case PacketType.INFO_LOOK_REQ:
+                InfoLookReqPacket infoLookReqPacket = (InfoLookReqPacket) packet;
+                new InfoLookLogic(infoLookReqPacket, channel).deal();
+                break;
+
+            case PacketType.FRIEND_INFO_REQ:
+                FriendInfoReqPacket friendInfoReqPacket = (FriendInfoReqPacket) packet;
+                new FriendInfoLogic(friendInfoReqPacket, channel).deal();
+                break;
+
+            case PacketType.ALL_FRIEND_REQ:
+                AllFriendReqPacket allFriendReqPacket = (AllFriendReqPacket) packet;
+                new AllFriendLogic(allFriendReqPacket, channel).deal();
                 break;
         }
     }

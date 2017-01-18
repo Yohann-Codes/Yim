@@ -74,4 +74,200 @@ public class UserDao extends Dao {
         }
         return users;
     }
+
+    /**
+     * 修改姓名
+     *
+     * @param username
+     * @param name
+     * @return
+     */
+    public int updateName(String username, String name) {
+        String sql = "update users set name = ? where username = ?";
+        int row = 0;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, name);
+            pstmt.setString(2, username);
+            row = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return row;
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param username
+     * @param password
+     * @return
+     */
+    public int updatePassword(String username, String password) {
+        String sql = "update users set password = ? where username = ?";
+        int row = 0;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, password);
+            pstmt.setString(2, username);
+            row = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return row;
+    }
+
+    /**
+     * 修改性别
+     *
+     * @param username
+     * @param sex
+     * @return
+     */
+    public int updateSex(String username, String sex) {
+        String sql = "update users set sex = ? where username = ?";
+        int row = 0;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, sex);
+            pstmt.setString(2, username);
+            row = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return row;
+    }
+
+    /**
+     * 修改年龄
+     *
+     * @param username
+     * @param age
+     * @return
+     */
+    public int updateAge(String username, String age) {
+        String sql = "update users set age = ? where username = ?";
+        int row = 0;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, age);
+            pstmt.setString(2, username);
+            row = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return row;
+    }
+
+    /**
+     * 修改联系电话
+     *
+     * @param username
+     * @param phone
+     * @return
+     */
+    public int updatePhone(String username, String phone) {
+        String sql = "update users set phone = ? where username = ?";
+        int row = 0;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, phone);
+            pstmt.setString(2, username);
+            row = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return row;
+    }
+
+    /**
+     * 修改地址
+     *
+     * @param username
+     * @param address
+     * @return
+     */
+    public int updateAddress(String username, String address) {
+        String sql = "update users set address = ? where username = ?";
+        int row = 0;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, address);
+            pstmt.setString(2, username);
+            row = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return row;
+    }
+
+    /**
+     * 修改自我介绍
+     *
+     * @param username
+     * @param introduction
+     * @return
+     */
+    public int updateIntroduction(String username, String introduction) {
+        String sql = "update users set introduction = ? where username = ?";
+        int row = 0;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, introduction);
+            pstmt.setString(2, username);
+            row = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return row;
+    }
 }

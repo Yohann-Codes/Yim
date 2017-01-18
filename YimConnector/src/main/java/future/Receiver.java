@@ -6,10 +6,24 @@ package future;
  * // 首先在别的类中注册消息接收器
  * Future.getFuture().addReceiver(new MyReceiver());
  *
+ * // 实现Receiver接口
  * public class MyReceiver implements Receiver {
+ *
  *     public void receivePersonMessage(String sender, String message, long time) {
  *         String t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time));
  *         System.out.println("" + sender + ": " + message + "   [" + t + "]");
+ *     }
+ *
+ *     public void receiveFriendAddReq(String requester, String info) {
+ *         System.out.println(requester + " 请求添加你为好友   备注：" + info);
+ *     }
+ *
+ *     public void receiveFriendReply(String responser, boolean isArgee) {
+ *         if (isArgee) {
+ *             System.out.println(responser + " 同意添加好友");
+ *         } else {
+ *             System.out.println(responser + " 拒绝添加好友");
+ *         }
  *     }
  * }
  *

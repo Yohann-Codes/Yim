@@ -9,8 +9,16 @@ import packet.Request;
  * Created by yohann on 2017/1/14.
  */
 public class FriendInfoReqPacket extends Request {
-    public FriendInfoReqPacket(String username) {
+
+    private String friend;
+
+    public FriendInfoReqPacket(String username, String friend) {
         super(username);
         packetType = PacketType.FRIEND_INFO_REQ;
+        this.friend = friend;
+    }
+
+    public String getFriend() {
+        return friend;
     }
 }

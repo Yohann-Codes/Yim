@@ -18,15 +18,15 @@ import java.util.List;
  * <p>
  * Created by yohann on 2017/1/17.
  */
-public class FriendAddReqLogic {
-    private static final Logger LOGGER = Logger.getLogger(FriendAddReqLogic.class);
+public class FriendAddLogic {
+    private static final Logger LOGGER = Logger.getLogger(FriendAddLogic.class);
 
     private FriendAddReqPacket friendAddReqPacket;
     private Channel channel;
     private String requester;
     private String responser;
 
-    public FriendAddReqLogic(FriendAddReqPacket friendAddReqPacket, Channel channel) {
+    public FriendAddLogic(FriendAddReqPacket friendAddReqPacket, Channel channel) {
         this.friendAddReqPacket = friendAddReqPacket;
         this.channel = channel;
     }

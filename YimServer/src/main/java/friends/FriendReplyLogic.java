@@ -18,8 +18,8 @@ import java.util.List;
  * <p>
  * Created by yohann on 2017/1/18.
  */
-public class FriendReplyReqLogic {
-    private static final Logger LOGGER = Logger.getLogger(FriendReplyReqLogic.class);
+public class FriendReplyLogic {
+    private static final Logger LOGGER = Logger.getLogger(FriendReplyLogic.class);
 
     private FriendReplyReqPacket friendReplyReqPacket;
     private Channel channel;
@@ -30,7 +30,7 @@ public class FriendReplyReqLogic {
     private FriendReqDao friendReqDao;
     private String username;
 
-    public FriendReplyReqLogic(FriendReplyReqPacket friendReplyReqPacket, Channel channel) {
+    public FriendReplyLogic(FriendReplyReqPacket friendReplyReqPacket, Channel channel) {
         this.friendReplyReqPacket = friendReplyReqPacket;
         this.channel = channel;
     }
