@@ -9,6 +9,7 @@ import account.register.RegRespPacket;
 import common.UserInfo;
 import friends.*;
 import future.*;
+import groups.*;
 import io.netty.util.ReferenceCountUtil;
 import message.person.PersonMsgReqPacket;
 import message.person.PersonMsgRespPacket;
@@ -94,6 +95,31 @@ public class Dispatch {
             case PacketType.ALL_FRIEND_RESP:
                 AllFriendRespPacket allFriendRespPacket = (AllFriendRespPacket) packet;
                 allFriend(allFriendRespPacket);
+                break;
+
+            case PacketType.GROUP_CREATE_RESP:
+                GroupCreateRespPacket createRespPacket = (GroupCreateRespPacket) packet;
+                groupCreateResp(createRespPacket);
+                break;
+
+            case PacketType.GROUP_DISBAND_RESP:
+                GroupDisbandRespPacket groupDisbandRespPacket = (GroupDisbandRespPacket) packet;
+                groupDisbandResp(groupDisbandRespPacket);
+                break;
+
+            case PacketType.MEMBER_INVITE_RESP:
+                MemberInviteRespPacket memberInviteRespPacket = (MemberInviteRespPacket) packet;
+                memberInviteResp(memberInviteRespPacket);
+                break;
+
+            case PacketType.MEMBER_KICK_RESP:
+                MemberKickRespPacket memberKickRespPacket = (MemberKickRespPacket) packet;
+                memberKickResp(memberKickRespPacket);
+                break;
+
+            case PacketType.ALL_GROUPS_RESP:
+                AllGroupsRespPacket allGroupsRespPacket = (AllGroupsRespPacket) packet;
+                allGroupsResp(allGroupsRespPacket);
                 break;
         }
     }
@@ -307,5 +333,76 @@ public class Dispatch {
             allFriendFutureListener.onNoExist();
         }
         ReferenceCountUtil.release(allFriendRespPacket);
+    }
+
+    /**
+     * 接收创建讨论组响应信息
+     *
+     * @param groupCreateRespPacket
+     */
+    private void groupCreateResp(GroupCreateRespPacket groupCreateRespPacket) {
+        GroupCreateFutureListener groupCreateFutureListener = Future.getFuture().getGroupCreateFutureListener();
+        if (groupCreateRespPacket.isSuccess()) {
+            groupCreateFutureListener.onSuccess(groupCreateRespPacket.getGroupName());
+        } else {
+            groupCreateFutureListener.onFailure(groupCreateRespPacket.getHint());
+        }
+        ReferenceCountUtil.release(groupCreateRespPacket);
+    }
+
+    /**
+     * 接收解散讨论组响应信息
+     *
+     * @param groupDisbandRespPacket
+     */
+    private void groupDisbandResp(GroupDisbandRespPacket groupDisbandRespPacket) {
+        GroupDisbandFutureListener groupDisbandFutureListener = Future.getFuture().getGroupDisbandFutureListener();
+        if (groupDisbandRespPacket.isSuccess()) {
+            groupDisbandFutureListener.onSuccess(groupDisbandRespPacket.getGroupName());
+        } else {
+            groupDisbandFutureListener.onFailure(groupDisbandRespPacket.getHint());
+        }
+        ReferenceCountUtil.release(groupDisbandRespPacket);
+    }
+
+    /**
+     * 添加讨论组成员响应
+     *
+     * @param memberInviteRespPacket
+     */
+    private void memberInviteResp(MemberInviteRespPacket memberInviteRespPacket) {
+        MemberInviteFutureListener memberInviteFutureListener = Future.getFuture().getMemberInviteFutureListener();
+        if (memberInviteRespPacket.isSuccess()) {
+            memberInviteFutureListener.onSuccess();
+        } else {
+            memberInviteFutureListener.onFailure(memberInviteRespPacket.getHint());
+        }
+        ReferenceCountUtil.release(memberInviteRespPacket);
+    }
+
+    /**
+     * 踢出成员响应
+     *
+     * @param memberKickRespPacket
+     */
+    private void memberKickResp(MemberKickRespPacket memberKickRespPacket) {
+        MemberKickFutureListener memberKickFutureListener = Future.getFuture().getMemberKickFutureListener();
+        if (memberKickRespPacket.isSuccess()) {
+            memberKickFutureListener.onSuccess(memberKickRespPacket.getGroupName(), memberKickRespPacket.getMember())   ;
+        } else {
+            memberKickFutureListener.onFailure(memberKickRespPacket.getHint());
+        }
+        ReferenceCountUtil.release(memberKickRespPacket);
+    }
+
+    /**
+     * 查看所在全部讨论组信息
+     *
+     * @param allGroupsRespPacket
+     */
+    private void allGroupsResp(AllGroupsRespPacket allGroupsRespPacket) {
+        AllGroupsFutureListener allGroupsFutureListener = Future.getFuture().getAllGroupsFutureListener();
+        allGroupsFutureListener.onReceiveAllGroups(allGroupsRespPacket.getGroups());
+        ReferenceCountUtil.release(allGroupsRespPacket);
     }
 }

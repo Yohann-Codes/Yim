@@ -13,8 +13,7 @@ public class MemberInviteReqPacket extends Request {
     private String responser;
     private String groupName;
 
-    public MemberInviteReqPacket(String username, String groupName,
-                                 int groupId, String responser) {
+    public MemberInviteReqPacket(String username, String groupName, String responser) {
         super(username);
         packetType = PacketType.MEMBER_INVITE_REQ;
         this.groupName = groupName;

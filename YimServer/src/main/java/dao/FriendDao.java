@@ -154,7 +154,7 @@ public class FriendDao extends Dao {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.warn("MySQL查询好友空位出现异常", e);
+            LOGGER.warn("MySQL查询好友所在列名出现异常", e);
         }
         return null;
     }

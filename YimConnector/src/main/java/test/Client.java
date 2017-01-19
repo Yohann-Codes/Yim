@@ -12,6 +12,7 @@ import friends.FriendAdd;
 import friends.FriendRemove;
 import friends.FriendReply;
 import future.*;
+import groups.*;
 import message.person.PersonMsg;
 
 import java.util.*;
@@ -39,6 +40,11 @@ public class Client {
         cMap.put("set", 8);
         cMap.put("show", 9);
         cMap.put("friend", 10);
+        cMap.put("create", 11);
+        cMap.put("disband", 12);
+        cMap.put("invite", 13);
+        cMap.put("kick", 14);
+        cMap.put("group", 15);
 
         Scanner sc = new Scanner(System.in);
         while (true) {
@@ -76,9 +82,96 @@ public class Client {
                     case 10:
                         allFriends();
                         break;
+                    case 11:
+                        createGroup();
+                        break;
+                    case 12:
+                        disbandGroup();
+                        break;
+                    case 13:
+                        invite();
+                        break;
+                    case 14:
+                        kick();
+                        break;
+                    case 15:
+                        myGroups();
+                        break;
                 }
             }
         }
+    }
+
+    private static void myGroups() {
+        Future future = new AllGroups(UserInfo.username).execute();
+        future.addListener(new AllGroupsFutureListener() {
+            public void onReceiveAllGroups(Map<String, List<String>> groups) {
+                if (groups.size() != 0) {
+                    Set<Map.Entry<String, List<String>>> entries = groups.entrySet();
+                    Iterator<Map.Entry<String, List<String>>> ite = entries.iterator();
+                    while (ite.hasNext()) {
+                        Map.Entry<String, List<String>> group = ite.next();
+                        String groupName = group.getKey();
+                        List<String> members = group.getValue();
+                        System.out.println(groupName + " " + members);
+                    }
+                } else {
+                    System.out.println("没有加入任何讨论组");
+                }
+            }
+        });
+    }
+
+    private static void kick() {
+        Future future = new MemberKick(UserInfo.username, cArr[1], cArr[2]).execute();
+        future.addListener(new MemberKickFutureListener() {
+            public void onSuccess(String groupName, String member) {
+                System.out.println(member + " 已被踢出讨论组<" + groupName + ">");
+            }
+
+            public void onFailure(String hint) {
+                System.out.println("踢出成员失败，错误提示：" + hint);
+            }
+        });
+    }
+
+    private static void invite() {
+        Future future = new MemberInvite(UserInfo.username, cArr[1], cArr[2]).execute();
+        future.addListener(new MemberInviteFutureListener() {
+            public void onSuccess() {
+                System.out.println("邀请成功");
+            }
+
+            public void onFailure(String hint) {
+                System.out.println("邀请失败，错误提示：" + hint);
+            }
+        });
+    }
+
+    private static void disbandGroup() {
+        Future future = new GroupDisband(UserInfo.username, cArr[1]).execute();
+        future.addListener(new GroupDisbandFutureListener() {
+            public void onSuccess(String groupName) {
+                System.out.println("讨论组<" + groupName + "> 已解散");
+            }
+
+            public void onFailure(String hint) {
+                System.out.println("讨论组解散失败，错误提示：" + hint);
+            }
+        });
+    }
+
+    private static void createGroup() {
+        Future future = new GroupCreate(UserInfo.username, cArr[1]).execute();
+        future.addListener(new GroupCreateFutureListener() {
+            public void onSuccess(String groupName) {
+                System.out.println("讨论组<" + groupName + "> 创建成功");
+            }
+
+            public void onFailure(String hint) {
+                System.out.println("讨论组创建失败，错误提示：" + hint);
+            }
+        });
     }
 
     private static void allFriends() {

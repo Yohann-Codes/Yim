@@ -76,10 +76,10 @@ public class PacketType {
     public static final int ALL_FRIEND_REQ = 0x22;
     // 查看全部好友响应
     public static final int ALL_FRIEND_RESP = 0x23;
-    // 查看讨论组所有成员请求
-    public static final int ALL_MEMBER_REQ = 0x24;
-    // 查看讨论组所有成员响应
-    public static final int ALL_MEMBER_RESP = 0x25;
+    // 查看所在的全部讨论组请求
+    public static final int ALL_GROUPS_REQ = 0x24;
+    // 查看所在的全部讨论组响应
+    public static final int ALL_GROUPS_RESP = 0x25;
     // 服务器给客户端发送的通知
     public static final int NOTICE = 0x26;
     // 登出请求

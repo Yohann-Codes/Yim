@@ -8,9 +8,9 @@ import packet.Request;
  * <p>
  * Created by yohann on 2017/1/14.
  */
-public class AllMemberReqPacket extends Request {
-    public AllMemberReqPacket(String username) {
+public class AllGroupsReqPacket extends Request {
+    public AllGroupsReqPacket(String username) {
         super(username);
-        packetType = PacketType.ALL_MEMBER_REQ;
+        packetType = PacketType.ALL_GROUPS_REQ;
     }
 }

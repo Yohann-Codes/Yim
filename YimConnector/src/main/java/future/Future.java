@@ -20,6 +20,11 @@ public class Future {
     private InfoLookFutureListener infoLookFutureListener;
     private FriendInfoFutureListener friendInfoFutureListener;
     private AllFriendFutureListener allFriendFutureListener;
+    private GroupCreateFutureListener groupCreateFutureListener;
+    private GroupDisbandFutureListener groupDisbandFutureListener;
+    private MemberInviteFutureListener memberInviteFutureListener;
+    private MemberKickFutureListener memberKickFutureListener;
+    private AllGroupsFutureListener allGroupsFutureListener;
 
     private Future() {
     }
@@ -77,6 +82,26 @@ public class Future {
         allFriendFutureListener = listener;
     }
 
+    public void addListener(GroupCreateFutureListener listener) {
+        groupCreateFutureListener = listener;
+    }
+
+    public void addListener(GroupDisbandFutureListener listener) {
+        groupDisbandFutureListener = listener;
+    }
+
+    public void addListener(MemberInviteFutureListener listener) {
+        memberInviteFutureListener = listener;
+    }
+
+    public void addListener(MemberKickFutureListener listener) {
+        memberKickFutureListener = listener;
+    }
+
+    public void addListener(AllGroupsFutureListener listener) {
+        allGroupsFutureListener = listener;
+    }
+
 
     public Receiver getReceiver() {
         return receiver;
@@ -120,5 +145,25 @@ public class Future {
 
     public AllFriendFutureListener getAllFriendFutureListener() {
         return allFriendFutureListener;
+    }
+
+    public GroupCreateFutureListener getGroupCreateFutureListener() {
+        return groupCreateFutureListener;
+    }
+
+    public GroupDisbandFutureListener getGroupDisbandFutureListener() {
+        return groupDisbandFutureListener;
+    }
+
+    public MemberInviteFutureListener getMemberInviteFutureListener() {
+        return memberInviteFutureListener;
+    }
+
+    public MemberKickFutureListener getMemberKickFutureListener() {
+        return memberKickFutureListener;
+    }
+
+    public AllGroupsFutureListener getAllGroupsFutureListener() {
+        return allGroupsFutureListener;
     }
 }

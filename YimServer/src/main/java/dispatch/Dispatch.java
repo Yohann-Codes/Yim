@@ -8,6 +8,7 @@ import account.person.*;
 import account.register.RegReqPacket;
 import account.register.RegisterLogic;
 import friends.*;
+import groups.*;
 import io.netty.channel.Channel;
 import message.person.PersonMsgLogic;
 import message.person.PersonMsgReqPacket;
@@ -85,6 +86,31 @@ public class Dispatch implements Runnable {
             case PacketType.ALL_FRIEND_REQ:
                 AllFriendReqPacket allFriendReqPacket = (AllFriendReqPacket) packet;
                 new AllFriendLogic(allFriendReqPacket, channel).deal();
+                break;
+
+            case PacketType.GROUP_CREATE_REQ:
+                GroupCreateReqPacket groupCreateReqPacket = (GroupCreateReqPacket) packet;
+                new GroupCreateLogic(groupCreateReqPacket, channel).deal();
+                break;
+
+            case PacketType.GROUP_DISBAND_REQ:
+                GroupDisbandReqPacket groupDisbandReqPacket = (GroupDisbandReqPacket) packet;
+                new GroupDisbandLogic(groupDisbandReqPacket, channel).deal();
+                break;
+
+            case PacketType.MEMBER_INVITE_REQ:
+                MemberInviteReqPacket memberInviteReqPacket = (MemberInviteReqPacket) packet;
+                new MemberInviteLogic(memberInviteReqPacket, channel).deal();
+                break;
+
+            case PacketType.MEMBER_KICK_REQ:
+                MemberKickReqPacket memberKickReqPacket = (MemberKickReqPacket) packet;
+                new MemberKickLogic(memberKickReqPacket, channel).deal();
+                break;
+
+            case PacketType.ALL_GROUPS_REQ:
+                AllGroupsReqPacket allGroupsReqPacket = (AllGroupsReqPacket) packet;
+                new AllGroupsLogic(allGroupsReqPacket, channel).deal();
                 break;
         }
     }
