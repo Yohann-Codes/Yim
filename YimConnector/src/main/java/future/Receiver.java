@@ -30,6 +30,14 @@ package future;
  *             System.out.println(responser + " 拒绝添加好友");
  *         }
  *     }
+ *
+ *     public void reconnectResp(boolean isSuccess, String hint) {
+ *         if (isSuccess) {
+ *             System.out.println("重新连接服务器成功");
+ *         } else {
+ *             System.out.println("重新连接服务器失败，错误提示：" + hint);
+ *         }
+ *     }
  * }
  *
  *
