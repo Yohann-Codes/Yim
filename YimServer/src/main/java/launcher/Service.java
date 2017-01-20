@@ -20,8 +20,8 @@ import java.util.concurrent.Executors;
  * Created by yohann on 2017/1/14.
  */
 public class Service {
-
     private static final Logger LOGGER = Logger.getLogger(Service.class);
+
     private ExecutorService tPool;
 
     /**
@@ -30,6 +30,8 @@ public class Service {
     public Service() {
         tPool = Executors.newCachedThreadPool();
         LOGGER.info("线程池配置完成");
+        new GroupTimer().start();
+        LOGGER.info("启动Group定时任务");
     }
 
     /**

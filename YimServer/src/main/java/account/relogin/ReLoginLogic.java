@@ -1,21 +1,17 @@
-package account.login;
+package account.relogin;
 
 import bean.OfflineMsgBean;
 import bean.OfflineMsgGroupBean;
-import bean.UserBean;
 import connection.ConnPool;
-import connection.TokenFactory;
 import connection.TokenPool;
 import dao.FriendReqDao;
 import dao.OfflineMsgDao;
 import dao.OfflineMsgGroupDao;
-import dao.UserDao;
 import friends.FriendAddReqPacket;
 import friends.FriendReplyReqPacket;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.util.ReferenceCountUtil;
 import message.group.GroupMsgReqPacket;
 import message.person.PersonMsgReqPacket;
 import org.apache.log4j.Logger;
@@ -25,75 +21,48 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * 登录逻辑
+ * 客户端重连逻辑
  * <p>
- * Created by yohann on 2017/1/14.
+ * Created by yohann on 2017/1/20.
  */
-public class LoginLogic {
-    private static final Logger LOGGER = Logger.getLogger(LoginLogic.class);
+public class ReLoginLogic {
+    private static final Logger LOGGER = Logger.getLogger(ReLoginLogic.class);
 
-    private LoginReqPacket loginReqPacket;
-    private Channel channel;
     private String username;
+    private Long token;
+    private Channel channel;
 
-    public LoginLogic(LoginReqPacket loginReqPacket, Channel channel) {
-        this.loginReqPacket = loginReqPacket;
+    public ReLoginLogic(ReLoginReqPacket reLoginReqPacket, Channel channel) {
+        username = reLoginReqPacket.getUsername();
+        token = reLoginReqPacket.getToken();
         this.channel = channel;
     }
 
-    /**
-     * 登录信息验证
-     */
     public void deal() {
-        username = loginReqPacket.getUsername();
-        String password = loginReqPacket.getPassword();
-        UserDao userDao = null;
-        try {
-            userDao = new UserDao();
-            List<UserBean> users = userDao.queryByUsername(username);
-            if (users.size() == 1) {
-                if (password.equals(users.get(0).getPassword())) {
-                    // 成功
-                    success();
-                } else {
-                    // 失败，密码错误
-                    defeat("密码错误");
-                }
-            } else {
-                // 失败，用户名错误
-                defeat("用户名错误");
-            }
-        } catch (ClassNotFoundException e) {
-            LOGGER.warn("MySQL连接异常", e);
-        } catch (SQLException e) {
-            LOGGER.warn("MySQL连接异常", e);
-        } finally {
-            if (userDao != null) {
-                userDao.close();
-            }
-            ReferenceCountUtil.release(loginReqPacket);
+        // 验证token
+        if (TokenPool.query(token)) {
+            success();
+        } else {
+            // token验证失败
+            defeat("token验证失败");
+            LOGGER.info("token验证失败，拒绝重连");
         }
     }
 
     /**
-     * 信息验证成功
+     * token验证成功
      */
     private void success() {
-        // 生成token
-        final TokenFactory factory = new TokenFactory();
-        final Long token = factory.generate();
         // 维护连接
-        boolean b1 = ConnPool.add(username, channel);
-        // 维护token
-        boolean b2 = TokenPool.add(token);
-        if (b1 && b2) {
+        boolean b = ConnPool.add(username, channel);
+        if (b) {
             // 发送响应数据包
-            LoginRespPacket loginRespPacket = new LoginRespPacket(username, true, token, null);
-            ChannelFuture future = channel.writeAndFlush(loginRespPacket);
+            ReLoginRespPacket reLoginRespPacket = new ReLoginRespPacket(true, null);
+            ChannelFuture future = channel.writeAndFlush(reLoginRespPacket);
             future.addListener(new ChannelFutureListener() {
                 public void operationComplete(ChannelFuture future) throws Exception {
                     if (future.isSuccess()) {
-                        LOGGER.info(username + " 登录成功");
+                        LOGGER.info(username + " 重连成功");
                         // 开启心跳检测
                         LOGGER.info(username + " 开启心跳检测");
                         channel.pipeline().addAfter("IdleStateHandler",
@@ -104,7 +73,7 @@ public class LoginLogic {
                         // 发送离线通知
                         sendOfflineNotice();
                     } else {
-                        LOGGER.warn(username + " 登录成功响应包发送失败");
+                        LOGGER.warn(username + " 重连成功响应包发送失败");
                         ConnPool.remove(username);
                         TokenPool.remove(token);
                     }
@@ -116,21 +85,21 @@ public class LoginLogic {
     }
 
     /**
-     * 信息验证失败
+     * token验证失败
      *
      * @param hint
      */
     private void defeat(String hint) {
         // 发送响应数据包
-        LoginRespPacket loginRespPacket = new LoginRespPacket(username, false, null, hint);
-        ChannelFuture future = channel.writeAndFlush(loginRespPacket);
+        ReLoginRespPacket reLoginRespPacket = new ReLoginRespPacket(false, hint);
+        ChannelFuture future = channel.writeAndFlush(reLoginRespPacket);
         future.addListener(new ChannelFutureListener() {
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                    LOGGER.info(username + " 登录失败");
+                    LOGGER.info(username + " 重连失败");
                     channel.close();
                 } else {
-                    LOGGER.warn(username + " 登录失败响应包发送失败");
+                    LOGGER.warn(username + " 重连失败响应包发送失败");
                 }
             }
         });

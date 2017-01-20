@@ -84,4 +84,8 @@ public class PacketType {
     public static final int NOTICE = 0x26;
     // 登出请求
     public static final int LOGOUT_REQ = 0x27;
+    // 重连请求
+    public static final int RE_LOGIN_REQ = 0x28;
+    // 重连响应
+    public static final int RE_LOGIN_RESP = 0x29;
 }

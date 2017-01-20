@@ -1,6 +1,7 @@
 package account.login;
 
 import account.OnConnectionListener;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import common.Constants;
 import common.UserInfo;
 import future.Future;
@@ -57,6 +58,7 @@ public class Login implements OnConnectionListener {
             login();
         } else {
             // 重连
+            reconnect();
         }
     }
 
@@ -72,5 +74,7 @@ public class Login implements OnConnectionListener {
      * 重连
      */
     private void reconnect() {
+        ReLoginReqPacket reLoginReqPacket = new ReLoginReqPacket(UserInfo.username, token);
+        UserInfo.channel.writeAndFlush(reLoginReqPacket);
     }
 }

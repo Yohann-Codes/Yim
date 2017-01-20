@@ -4,6 +4,7 @@ import connection.ConnPool;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
 import org.apache.log4j.Logger;
 import packet.HeartbeatPacket;
@@ -28,17 +29,19 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        if (username == null) {
-            username = ConnPool.query(channel);
-        }
-        // 心跳丢失
-        counter++;
-        LOGGER.info(username + " 丢失" + counter + "个心跳包");
-        if (counter > 4) {
-            // 心跳丢失数达到5个，主动断开连接
-            ctx.channel().close();
-            // 将该连接从连接池中删除
-            ConnPool.remove(username);
+        if (evt instanceof IdleStateEvent) {
+            if (username == null) {
+                username = ConnPool.query(channel);
+            }
+            // 心跳丢失
+            counter++;
+            LOGGER.info(username + " 丢失" + counter + "个心跳包");
+            if (counter > 4) {
+                // 心跳丢失数达到5个，主动断开连接
+                ctx.channel().close();
+                // 将该连接从连接池中删除
+                ConnPool.remove(username);
+            }
         }
     }
 
@@ -56,7 +59,7 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
             }
             // 心跳丢失清零
             counter = 0;
-//            LOGGER.info(username + " 收到心跳包");
+            LOGGER.info(username + " 收到心跳包");
             ReferenceCountUtil.release(msg);
         } else {
             ctx.fireChannelRead(msg);

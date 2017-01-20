@@ -29,4 +29,9 @@ public class UserInfo {
      * 讨论组
      */
     public static List<String> groups;
+
+    /**
+     * 登出标志
+     */
+    public static boolean isLogout = false;
 }

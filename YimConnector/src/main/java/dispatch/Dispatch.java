@@ -1,6 +1,7 @@
 package dispatch;
 
 import account.login.LoginRespPacket;
+import account.login.ReLoginRespPacket;
 import account.person.AllFriendRespPacket;
 import account.person.FriendInfoRespPacket;
 import account.person.InfoLookRespPacket;
@@ -11,6 +12,8 @@ import friends.*;
 import future.*;
 import groups.*;
 import io.netty.util.ReferenceCountUtil;
+import message.group.GroupMsgReqPacket;
+import message.group.GroupMsgRespPacket;
 import message.person.PersonMsgReqPacket;
 import message.person.PersonMsgRespPacket;
 import packet.Packet;
@@ -120,6 +123,21 @@ public class Dispatch {
             case PacketType.ALL_GROUPS_RESP:
                 AllGroupsRespPacket allGroupsRespPacket = (AllGroupsRespPacket) packet;
                 allGroupsResp(allGroupsRespPacket);
+                break;
+
+            case PacketType.GROUP_MSG_RESP:
+                GroupMsgRespPacket groupMsgRespPacket = (GroupMsgRespPacket) packet;
+                groupMesResp(groupMsgRespPacket);
+                break;
+
+            case PacketType.GROUP_MSG_REQ:
+                GroupMsgReqPacket groupMsgReqPacket = (GroupMsgReqPacket) packet;
+                receiveGroupMsg(groupMsgReqPacket);
+                break;
+
+            case PacketType.RE_LOGIN_RESP:
+                ReLoginRespPacket reLoginRespPacket = (ReLoginRespPacket) packet;
+                reLoginResp(reLoginRespPacket);
                 break;
         }
     }
@@ -388,7 +406,7 @@ public class Dispatch {
     private void memberKickResp(MemberKickRespPacket memberKickRespPacket) {
         MemberKickFutureListener memberKickFutureListener = Future.getFuture().getMemberKickFutureListener();
         if (memberKickRespPacket.isSuccess()) {
-            memberKickFutureListener.onSuccess(memberKickRespPacket.getGroupName(), memberKickRespPacket.getMember())   ;
+            memberKickFutureListener.onSuccess(memberKickRespPacket.getGroupName(), memberKickRespPacket.getMember());
         } else {
             memberKickFutureListener.onFailure(memberKickRespPacket.getHint());
         }
@@ -404,5 +422,47 @@ public class Dispatch {
         AllGroupsFutureListener allGroupsFutureListener = Future.getFuture().getAllGroupsFutureListener();
         allGroupsFutureListener.onReceiveAllGroups(allGroupsRespPacket.getGroups());
         ReferenceCountUtil.release(allGroupsRespPacket);
+    }
+
+    /**
+     * 讨论组消息响应
+     *
+     * @param groupMsgRespPacket
+     */
+    private void groupMesResp(GroupMsgRespPacket groupMsgRespPacket) {
+        GroupMsgFutureListener groupMsgFutureListener = Future.getFuture().getGroupMsgFutureListener();
+        if (groupMsgRespPacket.isSuccess()) {
+            groupMsgFutureListener.onSuccess();
+        } else {
+            groupMsgFutureListener.onFailure(groupMsgRespPacket.getHint());
+        }
+        ReferenceCountUtil.release(groupMsgRespPacket);
+    }
+
+    /**
+     * 讨论组消息
+     *
+     * @param groupMsgReqPacket
+     */
+    private void receiveGroupMsg(GroupMsgReqPacket groupMsgReqPacket) {
+        String groupName = groupMsgReqPacket.getGroupName();
+        String sender = groupMsgReqPacket.getUsername();
+        String message = groupMsgReqPacket.getMessage();
+        long time = groupMsgReqPacket.getTime();
+        Receiver receiver = Future.getFuture().getReceiver();
+        receiver.receiveGroupMessage(groupName, sender, message, time);
+        ReferenceCountUtil.release(groupMsgReqPacket);
+    }
+
+    /**
+     * 重连响应
+     *
+     * @param reLoginRespPacket
+     */
+    private void reLoginResp(ReLoginRespPacket reLoginRespPacket) {
+        Receiver receiver = Future.getFuture().getReceiver();
+        boolean isSuccess = reLoginRespPacket.isSuccess();
+        String hint = reLoginRespPacket.getHint();
+        receiver.reconnectResp(isSuccess, hint);
     }
 }

@@ -11,7 +11,12 @@ package future;
  *
  *     public void receivePersonMessage(String sender, String message, long time) {
  *         String t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time));
- *         System.out.println("" + sender + ": " + message + "   [" + t + "]");
+ *         System.out.println(sender + ": " + message + "   [" + t + "]");
+ *     }
+ *
+ *     public void receiveGroupMessage(String groupName, String sender, String message, long time) {
+ *         String t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time));
+ *         System.out.println("<" + groupName + "> " + sender + ": " + message + "   [" + t + "]");
  *     }
  *
  *     public void receiveFriendAddReq(String requester, String info) {
@@ -27,6 +32,7 @@ package future;
  *     }
  * }
  *
+ *
  * Created by yohann on 2017/1/16.
  */
 public interface Receiver {
@@ -41,6 +47,16 @@ public interface Receiver {
     void receivePersonMessage(String sender, String message, long time);
 
     /**
+     * 重写此方法来接收讨论组消息
+     *
+     * @param groupName
+     * @param sender
+     * @param message
+     * @param time
+     */
+    void receiveGroupMessage(String groupName, String sender, String message, long time);
+
+    /**
      * 重写此方法来接收请求添加好友的通知
      *
      * @param requester
@@ -50,8 +66,17 @@ public interface Receiver {
 
     /**
      * 重写此方法来接收添加好友的请求的处理结果
+     *
      * @param responser
      * @param isArgee
      */
     void receiveFriendReply(String responser, boolean isArgee);
+
+    /**
+     * 重连此方法来接收断线重连响应结果
+     *
+     * @param isSuccess
+     * @param hint
+     */
+    void reconnectResp(boolean isSuccess, String hint);
 }

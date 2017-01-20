@@ -9,17 +9,17 @@ public class Config {
     /**
      * 数据库地址
      */
-    public static final String DB_URL = "jdbc:mysql://123.206.72.175:3306/yim";
+    public static final String DB_URL = "xxx";
 
     /**
      * 数据库用户名
      */
-    public static final String DB_USERNAME = "root";
+    public static final String DB_USERNAME = "xxx";
 
     /**
      * 数据库密码
      */
-    public static final String DB_PASSWORD = "1044510273yhYH";
+    public static final String DB_PASSWORD = "xxx";
 
     /**
      * 服务器监听端口

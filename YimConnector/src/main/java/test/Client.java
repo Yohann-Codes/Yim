@@ -13,12 +13,13 @@ import friends.FriendRemove;
 import friends.FriendReply;
 import future.*;
 import groups.*;
+import message.group.GroupMsg;
 import message.person.PersonMsg;
 
 import java.util.*;
 
 /**
- * 简单的测试Client
+ * 简单的测试Client（命令行模式）
  * <p>
  * Created by yohann on 2017/1/15.
  */
@@ -29,6 +30,7 @@ public class Client {
         // 注册消息接收器
         Future.getFuture().addReceiver(new MyReceiver());
 
+        // 添加命令
         Map<String, Integer> cMap = new HashMap<String, Integer>();
         cMap.put("login", 1);
         cMap.put("logout", 2);
@@ -62,7 +64,7 @@ public class Client {
                         register();
                         break;
                     case 4:
-                        sendPersonMsg();
+                        sendMsg();
                         break;
                     case 5:
                         addFriend();
@@ -380,17 +382,32 @@ public class Client {
         });
     }
 
-    private static void sendPersonMsg() {
-        Future future = new PersonMsg(cArr[1], cArr[2]).execute();
-        future.addListener(new PersonMsgFutureListener() {
-            public void onSuccess() {
-                System.out.println("发送成功");
-            }
+    private static void sendMsg() {
+        Future future;
+        if (cArr[1].equals("person")) {
+            future = new PersonMsg(cArr[2], cArr[3]).execute();
+            future.addListener(new PersonMsgFutureListener() {
+                public void onSuccess() {
+                    System.out.println("发送成功");
+                }
 
-            public void onFailure(String hint) {
-                System.out.println("发送失败，错误提示：" + hint);
-            }
-        });
+                public void onFailure(String hint) {
+                    System.out.println("发送失败，错误提示：" + hint);
+                }
+            });
+        }
+        if (cArr[1].equals("group")) {
+            future = new GroupMsg(cArr[2], cArr[3]).execute();
+            future.addListener(new GroupMsgFutureListener() {
+                public void onSuccess() {
+                    System.out.println("发送成功");
+                }
+
+                public void onFailure(String hint) {
+                    System.out.println("发送失败，错误提示：" + hint);
+                }
+            });
+        }
     }
 
     private static void register() {

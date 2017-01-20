@@ -7,9 +7,13 @@ import account.logout.LogoutReqPacket;
 import account.person.*;
 import account.register.RegReqPacket;
 import account.register.RegisterLogic;
+import account.relogin.ReLoginLogic;
+import account.relogin.ReLoginReqPacket;
 import friends.*;
 import groups.*;
 import io.netty.channel.Channel;
+import message.group.GroupMsgLogic;
+import message.group.GroupMsgReqPacket;
 import message.person.PersonMsgLogic;
 import message.person.PersonMsgReqPacket;
 import packet.Packet;
@@ -111,6 +115,16 @@ public class Dispatch implements Runnable {
             case PacketType.ALL_GROUPS_REQ:
                 AllGroupsReqPacket allGroupsReqPacket = (AllGroupsReqPacket) packet;
                 new AllGroupsLogic(allGroupsReqPacket, channel).deal();
+                break;
+
+            case PacketType.GROUP_MSG_REQ:
+                GroupMsgReqPacket groupMsgReqPacket = (GroupMsgReqPacket) packet;
+                new GroupMsgLogic(groupMsgReqPacket, channel).deal();
+                break;
+
+            case PacketType.RE_LOGIN_REQ:
+                ReLoginReqPacket reLoginReqPacket = (ReLoginReqPacket) packet;
+                new ReLoginLogic(reLoginReqPacket, channel).deal();
                 break;
         }
     }

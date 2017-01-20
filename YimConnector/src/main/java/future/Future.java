@@ -25,6 +25,7 @@ public class Future {
     private MemberInviteFutureListener memberInviteFutureListener;
     private MemberKickFutureListener memberKickFutureListener;
     private AllGroupsFutureListener allGroupsFutureListener;
+    private GroupMsgFutureListener groupMsgFutureListener;
 
     private Future() {
     }
@@ -102,6 +103,10 @@ public class Future {
         allGroupsFutureListener = listener;
     }
 
+    public void addListener(GroupMsgFutureListener listener) {
+        groupMsgFutureListener = listener;
+    }
+
 
     public Receiver getReceiver() {
         return receiver;
@@ -165,5 +170,9 @@ public class Future {
 
     public AllGroupsFutureListener getAllGroupsFutureListener() {
         return allGroupsFutureListener;
+    }
+
+    public GroupMsgFutureListener getGroupMsgFutureListener() {
+        return groupMsgFutureListener;
     }
 }
